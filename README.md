@@ -5,6 +5,21 @@ a canonical markdown round-trip, plus HTML and JSON export — tables, task
 lists, code blocks, KaTeX math, Mermaid diagrams, charts, callouts, toggles,
 mentions and page links.
 
+## Install
+
+```sh
+pnpm add @rakshamlabs/rdump-editor   # or: npm install / yarn add
+```
+
+- Requires `react` and `react-dom` ^19 (peer dependencies).
+- Import the stylesheet once, app-wide: `import "@rakshamlabs/rdump-editor/styles.css";`
+- If you enable `features.math`, also import KaTeX's stylesheet (katex ships
+  with this package): `import "katex/dist/katex.min.css";`
+- Ships as ESM with `"use client"` directives — works in Vite, Next.js App
+  Router (no `transpilePackages` needed), and any React 19 bundler setup.
+
+## Usage
+
 ```tsx
 import { RDumpEditor } from "@rakshamlabs/rdump-editor";
 import "@rakshamlabs/rdump-editor/styles.css";
