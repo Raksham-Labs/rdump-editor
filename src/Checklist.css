@@ -1,0 +1,66 @@
+/* Checklist progress chip — revealed when hovering a top-level task list.
+   Progress is derived from the taskItem tree at render time and never
+   persisted, so the canonical markdown stays plain GFM `- [ ]` lines. */
+
+.rdump-checklist {
+  position: relative;
+}
+
+.rdump-checklist__meta {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 22px;
+  padding: 0 9px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity var(--duration-fast) ease;
+  pointer-events: none;
+  user-select: none;
+  z-index: 3;
+}
+
+.rdump-checklist:hover > .rdump-checklist__meta {
+  opacity: 1;
+}
+
+/* Nested task lists live inside a taskItem <li>; only the outermost list
+   shows a chip (it already counts every descendant item). */
+.rdump-editor li[data-type="taskItem"] .rdump-checklist__meta {
+  display: none;
+}
+
+.rdump-checklist__bar {
+  width: 44px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.rdump-checklist__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 160ms ease;
+}
+
+/* Keep a visible sliver once anything is done, even at 1-of-many. */
+.rdump-checklist__fill[data-some="true"] {
+  min-width: 3px;
+}
+
+.rdump-checklist[data-complete="true"] .rdump-checklist__fill {
+  background: var(--success);
+}

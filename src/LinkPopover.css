@@ -1,0 +1,98 @@
+/* Link popover — shown via BubbleMenu plugin when cursor is inside a link
+   mark, or when the user explicitly enters "edit link" mode from the
+   toolbar / formatting bubble. Placement is bottom-start so it sits below
+   the link, leaving the formatting bubble (top-placed) room above. */
+
+.rdump-link-pop {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
+  font-size: 12px;
+}
+
+.rdump-link-pop__view,
+.rdump-link-pop__edit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rdump-link-pop__url {
+  display: inline-block;
+  max-width: 280px;
+  padding: 0 6px;
+  color: var(--accent);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.rdump-link-pop__url:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.rdump-link-pop__input {
+  width: 260px;
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel-subtle);
+  font-size: 12px;
+  color: var(--foreground);
+  outline: none;
+  transition: border-color var(--duration-fast) ease;
+}
+
+.rdump-link-pop__input:focus {
+  border-color: var(--accent);
+}
+
+.rdump-link-pop__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  color: var(--muted-strong);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.rdump-link-pop__btn:hover {
+  background: var(--muted-bg);
+  color: var(--foreground);
+}
+
+.rdump-link-pop__btn--primary {
+  background: var(--accent);
+  color: var(--accent-fg, #fff);
+}
+
+.rdump-link-pop__btn--primary:hover {
+  background: var(--accent);
+  color: var(--accent-fg, #fff);
+  filter: brightness(1.05);
+}
+
+.rdump-link-pop__btn--danger {
+  color: var(--danger, #b91c1c);
+}
+
+.rdump-link-pop__btn--danger:hover {
+  background: var(--danger-soft, #fee2e2);
+  color: var(--danger, #b91c1c);
+}

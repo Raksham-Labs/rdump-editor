@@ -1,0 +1,39 @@
+.rdump-table-add {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.04);
+  border: 0;
+  color: var(--muted);
+  cursor: pointer;
+  z-index: 6;
+  padding: 0;
+  opacity: 0.75;
+  transition: opacity var(--duration-fast) ease, background var(--duration-fast) ease,
+    color var(--duration-fast) ease;
+}
+
+.rdump-table-add:hover {
+  opacity: 1;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.rdump-table-add--col {
+  width: 14px;
+  border-left: 1px solid var(--border);
+  border-radius: 0 4px 4px 0;
+  cursor: e-resize;
+}
+
+.rdump-table-add--row {
+  height: 14px;
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 4px 4px;
+  cursor: s-resize;
+}
+
+.rdump-table-add svg {
+  pointer-events: none;
+}

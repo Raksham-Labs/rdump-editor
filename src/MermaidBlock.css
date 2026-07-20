@@ -1,0 +1,232 @@
+.rdump-mermaid {
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  overflow: hidden;
+}
+
+.rdump-mermaid__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-subtle);
+}
+
+.rdump-mermaid__title,
+.rdump-mermaid__title-input {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 340px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rdump-mermaid__title {
+  display: inline-block;
+}
+
+.rdump-mermaid__title-input {
+  margin-left: -6px;
+  padding: 3px 6px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  outline: none;
+}
+
+.rdump-mermaid__title-input::placeholder {
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+}
+
+.rdump-mermaid__title-input:hover {
+  background: var(--muted-bg);
+}
+
+.rdump-mermaid__title-input:focus {
+  background: var(--muted-bg);
+  color: var(--foreground);
+}
+
+.rdump-mermaid__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rdump-mermaid__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted-strong);
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+.rdump-mermaid__toggle:hover {
+  background: var(--muted-bg);
+  color: var(--foreground);
+}
+
+.rdump-mermaid__docs span {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.rdump-mermaid__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 24px;
+  padding: 0;
+  color: var(--muted-strong);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.rdump-mermaid__icon-btn:hover {
+  background: var(--muted-bg);
+  color: var(--foreground);
+}
+
+.rdump-mermaid__editor {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+}
+
+.rdump-mermaid__preview {
+  position: relative;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel);
+  min-height: 80px;
+}
+
+/* Interactive viewport: the canvas is absolutely positioned + transformed, so
+   we clip to a fixed-height window and capture pointer/wheel gestures. */
+.rdump-mermaid__preview.is-interactive {
+  padding: 0;
+  height: 360px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.rdump-mermaid__preview.is-interactive.is-dragging {
+  cursor: grabbing;
+}
+
+.rdump-mermaid__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.rdump-mermaid__canvas svg {
+  display: block;
+  /* Mermaid stamps an inline `max-width` (and width/height) on the SVG via its
+     useMaxWidth option. A plain stylesheet rule loses to an inline style, and
+     clearing it imperatively doesn't survive React re-applying the SVG markup —
+     so force the SVG to fill the (zoom-)resized canvas with `!important`, the
+     one thing that overrides an inline style. Without this the SVG stays capped
+     at its natural width and zoom appears to do nothing past 100%. */
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+}
+
+.rdump-mermaid__preview:not(.is-interactive) svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.rdump-mermaid__controls {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: color-mix(in srgb, var(--panel) 82%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.rdump-mermaid__preview.is-interactive:hover .rdump-mermaid__controls,
+.rdump-mermaid__controls:focus-within {
+  opacity: 1;
+}
+
+.rdump-mermaid__ctrl {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  color: var(--muted-strong);
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.rdump-mermaid__ctrl:hover {
+  background: var(--muted-bg);
+  color: var(--foreground);
+}
+
+.rdump-mermaid__pct {
+  min-width: 40px;
+  font-size: 11px;
+  text-align: center;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.rdump-mermaid__error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--danger);
+  background: var(--danger-soft);
+  padding: 10px 12px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+}

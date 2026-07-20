@@ -1,0 +1,32 @@
+.rdump-callout {
+  display: block;
+  margin: 1rem 0;
+  padding: 14px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel-subtle);
+}
+
+.rdump-callout[data-variant="info"] {
+  border-color: var(--accent-soft-strong);
+  background: var(--accent-soft);
+}
+
+.rdump-callout[data-variant="warning"] {
+  border-color: #fde68a;
+  background: var(--warning-soft);
+}
+
+.rdump-callout[data-variant="success"] {
+  border-color: #bbf7d0;
+  background: var(--success-soft);
+}
+
+.rdump-callout[data-variant="danger"] {
+  border-color: #fecaca;
+  background: var(--danger-soft);
+}
+
+.rdump-callout > * {
+  margin: 0;
+}

@@ -1,0 +1,35 @@
+.rdump-caption,
+.rdump-caption__input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 14px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+}
+
+.rdump-caption__input {
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  /* Height is driven by JS (auto-grow); keep wrapping for long lines. */
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.rdump-caption__input::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.rdump-caption {
+  font-style: italic;
+  /* Preserve hard line breaks the author typed into the caption. */
+  white-space: pre-wrap;
+  word-break: break-word;
+}

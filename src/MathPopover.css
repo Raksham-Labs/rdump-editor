@@ -1,0 +1,131 @@
+/* Math editor popover — anchored to the clicked math node, edits the LaTeX
+   source and updates the rendered KaTeX output. Same self-positioning
+   pattern as ImagePopover/LinkPopover (no BubbleMenu plugin). */
+
+.rdump-math-pop {
+  width: 360px;
+  padding: 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
+}
+
+.rdump-math-pop__form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rdump-math-pop__label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.rdump-math-pop__input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel-subtle);
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--foreground);
+  outline: none;
+  resize: vertical;
+  transition: border-color var(--duration-fast) ease;
+}
+
+.rdump-math-pop__input:focus {
+  border-color: var(--accent);
+}
+
+.rdump-math-pop__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rdump-math-pop__hint {
+  flex: 1;
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.rdump-math-pop__hint:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.rdump-math-pop__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.rdump-math-pop__btn:hover {
+  background: var(--muted-bg);
+}
+
+.rdump-math-pop__btn--primary {
+  background: var(--accent);
+  color: var(--accent-fg, #fff);
+  border-color: transparent;
+}
+
+.rdump-math-pop__btn--primary:hover {
+  filter: brightness(1.05);
+  background: var(--accent);
+  color: var(--accent-fg, #fff);
+}
+
+.rdump-math-pop__btn--danger {
+  color: var(--danger, #b91c1c);
+}
+
+.rdump-math-pop__btn--danger:hover {
+  background: var(--danger-soft, #fee2e2);
+  color: var(--danger, #b91c1c);
+}
+
+/* Click affordance on the rendered math itself — the Mathematics extension
+   tags the wrapper with .tiptap-mathematics-render. We add the hover/cursor
+   only when the editor is editable (the extension adds the --editable
+   modifier in that case). */
+.rdump-editor .tiptap-mathematics-render--editable {
+  cursor: pointer;
+  padding: 1px 3px;
+  border-radius: 4px;
+  transition: background var(--duration-fast) ease;
+}
+
+.rdump-editor .tiptap-mathematics-render--editable:hover {
+  background: var(--accent-soft);
+}
+
+/* Spacing around block math so it doesn't crowd surrounding paragraphs.
+   Left-aligned (Notion style); KaTeX's displayMode centers by default via
+   .katex-display, so explicitly override to text-align: left. */
+.rdump-editor div[data-type="block-math"] {
+  margin: 0.8em 0;
+  text-align: left;
+}
+
+.rdump-editor div[data-type="block-math"] .katex-display {
+  margin: 0;
+  text-align: left;
+}

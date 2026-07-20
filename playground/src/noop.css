@@ -1,0 +1,3 @@
+/* Source-mode stand-in for @rakshamlabs/rdump-editor/styles.css: the source modules
+ * import their own CSS directly, so the packaged stylesheet is a no-op here.
+ * In --mode dist the alias points at ../dist/styles.css instead. */

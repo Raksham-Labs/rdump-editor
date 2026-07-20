@@ -1,0 +1,915 @@
+.rdump-editor-wrap {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- Top bar: formatting toolbar + view-mode switch ---------- */
+.rdump-editor-topbar {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  flex-shrink: 0;
+  z-index: 15;
+}
+
+/* The toolbar wraps its own buttons and fills the row; the topbar owns the
+   bottom border now, so drop the toolbar's own. */
+.rdump-editor-topbar .rdump-toolbar {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-bottom: 0;
+  z-index: auto;
+}
+
+/* Stand-in label shown on the left in markdown-only mode (no toolbar). */
+.rdump-editor-topbar__title {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.rdump-viewswitch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  margin-right: 10px;
+  align-self: center;
+  flex: 0 0 auto;
+  padding: 2px;
+  background: var(--muted-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.rdump-viewswitch__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border: 0;
+  background: transparent;
+  border-radius: calc(var(--radius-sm) - 1px);
+  color: var(--muted-strong);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.rdump-viewswitch__btn:hover {
+  color: var(--foreground);
+}
+
+.rdump-viewswitch__btn[data-active="true"] {
+  background: var(--panel);
+  color: var(--foreground);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- Panes: editor / markdown / split ---------- */
+.rdump-editor-panes {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.rdump-editor-panes[data-view="split"] {
+  flex-direction: row;
+}
+
+.rdump-editor-panes[data-view="split"] > .rdump-editor-scroll {
+  flex: 1 1 50%;
+  min-width: 0;
+  border-right: 1px solid var(--border);
+}
+
+.rdump-editor-panes[data-view="split"] > .rdump-md-pane {
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+/* Stack the split panes (markdown below the editor) when the row is too
+   narrow to read both side by side. */
+@media (max-width: 900px) {
+  .rdump-editor-panes[data-view="split"] {
+    flex-direction: column;
+  }
+  .rdump-editor-panes[data-view="split"] > .rdump-editor-scroll {
+    flex: 1 1 50%;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .rdump-editor-panes[data-view="split"] > .rdump-md-pane {
+    flex: 1 1 50%;
+  }
+}
+
+@media (max-width: 560px) {
+  .rdump-viewswitch__label {
+    display: none;
+  }
+  .rdump-viewswitch__btn {
+    padding: 0 7px;
+  }
+}
+
+.rdump-editor-scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--panel);
+}
+
+/* ---------- Markdown source pane ---------- */
+.rdump-md-pane {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  background: var(--panel);
+}
+
+.rdump-md-source {
+  flex: 1 1 auto;
+  width: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 28px 32px 80px;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: var(--panel);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  tab-size: 2;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow-y: auto;
+}
+
+.rdump-md-source::placeholder {
+  color: var(--muted);
+}
+
+.rdump-md-source:read-only {
+  color: var(--muted-strong);
+  cursor: default;
+}
+
+.rdump-editor-shell {
+  min-height: 100%;
+  padding: 48px 56px 96px;
+  cursor: text;
+}
+
+.rdump-editor {
+  margin: 0 auto;
+  max-width: 760px;
+  width: 100%;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--foreground);
+  outline: none;
+}
+
+.rdump-editor > * + * {
+  margin-top: 0.8em;
+}
+
+.rdump-editor h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 0.2em;
+}
+
+.rdump-editor h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.6em;
+  line-height: 1.25;
+}
+
+.rdump-editor h3 {
+  font-size: 1.18rem;
+  font-weight: 600;
+  margin-top: 1.4em;
+  line-height: 1.3;
+}
+
+.rdump-editor p {
+  color: var(--foreground);
+}
+
+.rdump-editor a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.rdump-editor ul,
+.rdump-editor ol {
+  padding-left: 1.6rem;
+}
+
+.rdump-editor ul {
+  list-style-type: disc;
+}
+
+.rdump-editor ul ul {
+  list-style-type: circle;
+}
+
+.rdump-editor ul ul ul {
+  list-style-type: square;
+}
+
+.rdump-editor ol {
+  list-style-type: decimal;
+}
+
+.rdump-editor ol ol {
+  list-style-type: lower-alpha;
+}
+
+.rdump-editor ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.rdump-editor li {
+  padding-left: 0.15rem;
+}
+
+.rdump-editor li::marker {
+  color: var(--muted);
+}
+
+.rdump-editor li + li {
+  margin-top: 0.25em;
+}
+
+.rdump-editor li > p {
+  margin: 0;
+}
+
+.rdump-editor blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 0.4rem 0.9rem;
+  background: var(--accent-soft);
+  border-radius: 0 6px 6px 0;
+  color: var(--muted-strong);
+}
+
+.rdump-editor blockquote p {
+  color: var(--muted-strong);
+}
+
+.rdump-editor code {
+  background: #f1f5f9;
+  border-radius: 4px;
+  padding: 0.1em 0.3em;
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  color: #0f172a;
+}
+
+.rdump-editor pre {
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 14px 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+.rdump-editor pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+/* Code block chrome — language label + copy button rendered above the
+   <pre> by the React NodeView. The pre underneath loses its own rounded
+   corners on top so the header sits flush. */
+.rdump-codeblock {
+  margin: 1rem 0;
+  border-radius: 8px;
+  background: #0f172a;
+  overflow: hidden;
+  position: relative;
+}
+
+.rdump-codeblock__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px 6px 12px;
+  background: #111c2e;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  color: #94a3b8;
+  user-select: none;
+}
+
+.rdump-codeblock__lang {
+  background: transparent;
+  color: #cbd5f5;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  appearance: none;
+  transition: border-color var(--duration-fast) ease,
+    background var(--duration-fast) ease;
+}
+
+.rdump-codeblock__lang:hover,
+.rdump-codeblock__lang:focus {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  outline: none;
+}
+
+.rdump-codeblock__lang--static {
+  cursor: default;
+}
+
+.rdump-codeblock__lang option {
+  background: #111c2e;
+  color: #e2e8f0;
+}
+
+.rdump-codeblock__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  color: #94a3b8;
+  border: 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.rdump-codeblock__copy:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #f8fafc;
+}
+
+.rdump-codeblock__copy svg {
+  flex-shrink: 0;
+}
+
+/* The <pre> inside the React NodeView wrapper shares the wrapper's rounded
+   corners — disable its own radius so the seam under the header is clean. */
+.rdump-codeblock pre {
+  margin: 0;
+  border-radius: 0;
+}
+
+.rdump-editor mark {
+  border-radius: 3px;
+  padding: 0.05em 0.18em;
+  background: #fff3bf;
+}
+
+.rdump-editor hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+/* The table wrapper (renderWrapper: true) keeps a wide table contained inside
+   the editor — horizontal overflow scrolls inside the wrapper rather than
+   pushing the page wider. Position: relative so the floating add-row /
+   add-column buttons (portaled inside the wrapper) anchor to it and scroll
+   with the table. Padding-right/-bottom carve out room for the buttons so
+   they aren't clipped by overflow. */
+.rdump-editor .tableWrapper {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 1.2rem 0;
+  padding-right: 16px;
+  padding-bottom: 16px;
+  border-radius: 6px;
+}
+
+.rdump-editor .tableWrapper table {
+  margin: 0;
+  /* Keep auto layout so each column honors `min-width: 84px` from cell rules.
+     Fixed layout collapses newly added columns without explicit colgroup
+     widths to zero. */
+}
+
+.rdump-editor table {
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--border);
+  margin: 1.2rem 0;
+}
+
+.rdump-editor th,
+.rdump-editor td {
+  min-width: 84px;
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  vertical-align: top;
+  position: relative;
+  /* Wrap long words so a single huge word doesn't blow out the column width. */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.rdump-editor th {
+  background: var(--panel-subtle);
+  font-weight: 600;
+}
+
+/* prosemirror-tables marks selected cells with .selectedCell — overlay an
+   ::after layer so the highlight is visible above the cell's inner content. */
+.rdump-editor .selectedCell {
+  position: relative;
+}
+
+.rdump-editor .selectedCell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(59, 130, 246, 0.22);
+  border: 1px solid var(--accent);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Ensure cell text remains selectable (Tailwind preflight is fine here, but
+   make it explicit so no global rule accidentally suppresses native selection). */
+.rdump-editor th,
+.rdump-editor td {
+  user-select: text;
+}
+
+.rdump-editor .column-resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  pointer-events: none;
+}
+
+/* ProseMirror toggles this class on the editor element while the mouse is
+   inside a column-resize zone — give it the standard column-resize cursor. */
+.rdump-editor.resize-cursor,
+.rdump-editor .resize-cursor {
+  cursor: col-resize;
+}
+
+.rdump-editor ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.rdump-editor ul[data-type="taskList"] li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* Center the checkbox vertically within the first text line. The label box
+   takes the editor's line-height (1.7em) so the checkbox aligns with the
+   first line — same as Notion. For multi-line task text the checkbox stays
+   on the first line rather than the geometric middle of the block. */
+.rdump-editor ul[data-type="taskList"] li > label {
+  display: inline-flex;
+  align-items: center;
+  height: 1.7em;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.rdump-editor ul[data-type="taskList"] input[type="checkbox"] {
+  height: 14px;
+  width: 14px;
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+.rdump-editor ul[data-type="taskList"] li > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.rdump-editor ul[data-type="taskList"] li > div > p {
+  margin: 0;
+}
+
+.rdump-editor img.rdump-image {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+/* ---------- Image resize (Tiptap ResizableNodeView) ----------
+   The node view emits data-resize-container on the outer flex shell,
+   data-resize-wrapper on the relative parent that holds the img + handles,
+   and data-resize-handle="<direction>" on each handle. There are no
+   class hooks exposed by the Image extension, so target the data-attrs. */
+.rdump-editor [data-resize-container][data-node="image"] {
+  max-width: 100%;
+  margin: 0.4em 0;
+}
+
+.rdump-editor [data-resize-container][data-node="image"] [data-resize-wrapper] {
+  max-width: 100%;
+}
+
+.rdump-editor [data-resize-container][data-node="image"] img.rdump-image {
+  display: block;
+  margin: 0;
+  /* ResizableNodeView writes inline width AND height in pixels. Once
+     max-width: 100% clamps the rendered width, that inline height
+     drifts past the natural aspect ratio. Forcing height: auto makes
+     the browser keep the image's intrinsic ratio against the (clamped)
+     rendered width. */
+  height: auto !important;
+}
+
+.rdump-editor [data-resize-container][data-node="image"] [data-resize-handle] {
+  width: 10px;
+  height: 10px;
+  background: var(--background, #fff);
+  border: 1px solid var(--foreground, #111);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  z-index: 2;
+}
+
+.rdump-editor [data-resize-container][data-node="image"]:hover [data-resize-handle],
+.rdump-editor [data-resize-container][data-node="image"][data-resize-state="true"] [data-resize-handle],
+.rdump-editor [data-resize-container][data-node="image"].ProseMirror-selectednode [data-resize-handle] {
+  opacity: 1;
+}
+
+.rdump-editor [data-resize-handle="top-left"]    { cursor: nwse-resize; transform: translate(-50%, -50%); }
+.rdump-editor [data-resize-handle="top-right"]   { cursor: nesw-resize; transform: translate(50%, -50%); }
+.rdump-editor [data-resize-handle="bottom-left"] { cursor: nesw-resize; transform: translate(-50%, 50%); }
+.rdump-editor [data-resize-handle="bottom-right"]{ cursor: nwse-resize; transform: translate(50%, 50%); }
+
+/* ---------- Image loading shimmer ----------
+   ResizableImage adds .rdump-image-loading to the resize container until the
+   <img> fires load; error swaps it for .rdump-image-error. Uploaded images
+   stream from the host's asset store, so there's a real network gap to cover
+   with a placeholder. */
+.rdump-editor .rdump-image-loading [data-resize-wrapper],
+.rdump-editor .rdump-image-error [data-resize-wrapper] {
+  min-height: 140px;
+  min-width: min(320px, 100%);
+}
+
+.rdump-editor .rdump-image-loading img.rdump-image,
+.rdump-editor .rdump-image-error img.rdump-image {
+  opacity: 0;
+}
+
+.rdump-editor .rdump-image-loading [data-resize-wrapper]::before,
+.rdump-editor .rdump-image-error [data-resize-wrapper]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background:
+    linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, 0.75) 50%, transparent 65%)
+      no-repeat,
+    var(--muted-bg);
+  background-size: 220% 100%;
+  animation: rdump-image-shimmer 1.3s ease-in-out infinite;
+}
+
+/* Centered picture glyph (lucide "image", inline SVG so no icon-font/JS)
+   with the file size — when known — rendered beneath it via attr(). */
+.rdump-editor .rdump-image-loading [data-resize-wrapper]::after,
+.rdump-editor .rdump-image-error [data-resize-wrapper]::after {
+  content: attr(data-size-label);
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  min-width: 28px;
+  min-height: 28px;
+  padding-top: 34px;
+  transform: translate(-50%, -50%);
+  opacity: 0.55;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  text-align: center;
+  white-space: nowrap;
+  background: top center / 28px 28px no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='18' height='18' x='3' y='3' rx='2' ry='2'/%3E%3Ccircle cx='9' cy='9' r='2'/%3E%3Cpath d='m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'/%3E%3C/svg%3E");
+}
+
+/* Size badge on hover once the image is loaded. */
+.rdump-editor
+  [data-resize-container][data-node="image"]:not(.rdump-image-loading):not(.rdump-image-error)
+  [data-resize-wrapper][data-size-label]:hover::after {
+  content: attr(data-size-label);
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.68);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+/* Broken image: same placeholder, static, with the lucide "image-off" glyph. */
+.rdump-editor .rdump-image-error [data-resize-wrapper]::before {
+  animation: none;
+  background: var(--muted-bg);
+}
+
+.rdump-editor .rdump-image-error [data-resize-wrapper]::after {
+  opacity: 0.55;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='2' y1='2' x2='22' y2='22'/%3E%3Cpath d='M10.41 10.41a2 2 0 1 1-2.83-2.83'/%3E%3Cline x1='13.5' y1='13.5' x2='6' y2='21'/%3E%3Cline x1='18' y1='12' x2='21' y2='15'/%3E%3Cpath d='M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59'/%3E%3Cpath d='M21 15V5a2 2 0 0 0-2-2H9'/%3E%3C/svg%3E");
+}
+
+@keyframes rdump-image-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -20% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rdump-editor .rdump-image-loading [data-resize-wrapper]::before {
+    animation: none;
+  }
+}
+
+.rdump-editor p.is-empty::before,
+.rdump-editor h1.is-empty::before,
+.rdump-editor h2.is-empty::before,
+.rdump-editor h3.is-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: #a3a3a3;
+  pointer-events: none;
+}
+
+/* ---------- Details / toggle (NodeView is a <div>, not native <details>) ----------
+   Card layout: chevron + summary share a tinted header row, content sits in a
+   lighter body row below. A single border wraps the whole block so the
+   boundary is unambiguous. The wrapper div the extension injects between
+   <button> and the summary/content is collapsed with `display: contents` so
+   summary and content can participate directly in the grid template areas. */
+.rdump-editor div[data-type="details"] {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  grid-template-areas:
+    "btn summary"
+    "body body";
+  margin: 0.8em 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--panel);
+}
+
+/* Wrapper div between button and summary/content — make it transparent in
+   the layout so summary/content land in the grid's named areas. */
+.rdump-editor div[data-type="details"] > div {
+  display: contents;
+}
+
+/* Chevron button — left cell of the header row, tinted to match summary. */
+.rdump-editor div[data-type="details"] > button {
+  grid-area: btn;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--border);
+  background: var(--panel-subtle);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.rdump-editor div[data-type="details"] > button:hover {
+  background: var(--muted-bg);
+  color: var(--foreground);
+}
+
+/* Inline SVG (injected via renderToggleButton in extensions.ts). Rotates
+   90° clockwise when the toggle is open so it points down. */
+.rdump-editor div[data-type="details"] > button > svg {
+  display: block;
+  transition: transform var(--duration-fast) ease;
+}
+
+.rdump-editor div[data-type="details"].is-open > button > svg {
+  transform: rotate(90deg);
+}
+
+/* Summary header — same tinted bg as the button so they read as one strip.
+   <summary> elements get a default `list-style: disclosure-closed` marker
+   from the UA stylesheet, which paints an extra bullet next to text — kill
+   it on every vendor selector. */
+.rdump-editor div[data-type="details"] summary {
+  grid-area: summary;
+  display: block;
+  list-style: none;
+  padding: 8px 12px;
+  background: var(--panel-subtle);
+  color: var(--foreground);
+}
+
+.rdump-editor div[data-type="details"] summary::marker {
+  content: "";
+}
+
+.rdump-editor div[data-type="details"] summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Body — lighter bg, separated from the header by a top border. */
+.rdump-editor div[data-type="detailsContent"] {
+  grid-area: body;
+  padding: 10px 14px;
+  background: var(--panel);
+  color: var(--foreground);
+  border-top: 1px solid var(--border);
+}
+
+.rdump-editor div[data-type="detailsContent"] > * + * {
+  margin-top: 0.6em;
+}
+
+.rdump-editor div[data-type="details"]:not(.is-open) div[data-type="detailsContent"] {
+  display: none;
+}
+
+/* Empty-state placeholder for the summary — the summary holds text directly
+   (not a <p>), so target summary.is-empty. The global `p.is-empty::before`
+   rule's float/height/pointer-events still apply via the cascade since the
+   selectors don't overlap. */
+.rdump-editor div[data-type="details"] summary.is-empty::before {
+  content: "Toggle";
+  color: var(--muted);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* ---------- Bubble menu container ---------- */
+.rdump-bubble {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
+}
+
+/* Drag-handle / block-gutter styles live in BlockGutter.css */
+
+/* ---------- Footer / banners ---------- */
+.rdump-editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 24px;
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  background: var(--panel-subtle);
+  flex-shrink: 0;
+}
+
+.rdump-editor-footer__warning {
+  color: var(--warning);
+  font-weight: 500;
+}
+
+.rdump-editor-footer__counts {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.rdump-editor__readonly-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px auto 0;
+  padding: 8px 12px;
+  max-width: 760px;
+  width: calc(100% - 32px);
+  border-radius: 6px;
+  border: 1px solid #fde68a;
+  background: var(--warning-soft);
+  color: var(--warning);
+  font-size: 12px;
+}
+
+.rdump-editor__loading {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Math (KaTeX) — restrain font size so it matches body */
+.rdump-editor .katex {
+  font-size: 1.02em;
+}
+
+.rdump-editor .katex-display {
+  margin: 1.2em 0;
+}
+
+/* Code highlight tokens (lowlight) */
+.rdump-editor pre .hljs-comment,
+.rdump-editor pre .hljs-quote {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.rdump-editor pre .hljs-keyword,
+.rdump-editor pre .hljs-selector-tag,
+.rdump-editor pre .hljs-type {
+  color: #c4b5fd;
+}
+
+.rdump-editor pre .hljs-string,
+.rdump-editor pre .hljs-doctag {
+  color: #fda4af;
+}
+
+.rdump-editor pre .hljs-title,
+.rdump-editor pre .hljs-section {
+  color: #fde68a;
+}
+
+.rdump-editor pre .hljs-attr,
+.rdump-editor pre .hljs-built_in {
+  color: #93c5fd;
+}
+
+.rdump-editor pre .hljs-number,
+.rdump-editor pre .hljs-meta {
+  color: #86efac;
+}
+
+@media (max-width: 768px) {
+  .rdump-editor-shell {
+    padding: 28px 20px 64px;
+  }
+  .rdump-editor h1 {
+    font-size: 1.85rem;
+  }
+}

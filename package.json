@@ -1,0 +1,98 @@
+{
+  "name": "@rakshamlabs/rdump-editor",
+  "version": "0.1.0",
+  "description": "Markdown-first rich text editor: Tiptap-based writing surface with markdown/HTML/JSON round-trip, tables, tasks, math, mermaid, charts, mentions and page links — configurable per feature, lazy-loaded per flag.",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "scripts": {
+    "dev": "vite --config playground/vite.config.ts",
+    "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "preview:dist": "vite build && vite --config playground/vite.config.ts --mode dist",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm build && vitest run"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@tiptap/core": "3.23.1",
+    "@tiptap/extension-character-count": "3.23.1",
+    "@tiptap/extension-code-block-lowlight": "3.23.1",
+    "@tiptap/extension-details": "3.23.1",
+    "@tiptap/extension-drag-handle-react": "3.23.1",
+    "@tiptap/extension-highlight": "3.23.1",
+    "@tiptap/extension-image": "3.23.1",
+    "@tiptap/extension-link": "3.23.1",
+    "@tiptap/extension-mathematics": "3.23.1",
+    "@tiptap/extension-mention": "3.23.1",
+    "@tiptap/extension-placeholder": "3.23.1",
+    "@tiptap/extension-table": "3.23.1",
+    "@tiptap/extension-table-cell": "3.23.1",
+    "@tiptap/extension-table-header": "3.23.1",
+    "@tiptap/extension-table-row": "3.23.1",
+    "@tiptap/extension-task-item": "3.23.1",
+    "@tiptap/extension-task-list": "3.23.1",
+    "@tiptap/extension-typography": "3.23.1",
+    "@tiptap/extension-underline": "3.23.1",
+    "@tiptap/pm": "3.23.1",
+    "@tiptap/react": "3.23.1",
+    "@tiptap/starter-kit": "3.23.1",
+    "@tiptap/suggestion": "3.23.1",
+    "katex": "0.16.45",
+    "lowlight": "^3.3.0",
+    "lucide-react": "^1.14.0",
+    "mermaid": "11.15.0",
+    "recharts": "3.8.1",
+    "tiptap-markdown": "^0.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
+    "happy-dom": "^20.11.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "rollup-preserve-directives": "^1.1.3",
+    "typescript": "^5",
+    "vite": "^6.0.0",
+    "vitest": "^4.1.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Raksham-Labs/rdump-editor.git"
+  },
+  "homepage": "https://github.com/Raksham-Labs/rdump-editor#readme",
+  "bugs": {
+    "url": "https://github.com/Raksham-Labs/rdump-editor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "editor",
+    "rich-text",
+    "markdown",
+    "tiptap",
+    "prosemirror",
+    "wysiwyg",
+    "react"
+  ]
+}

@@ -1,0 +1,143 @@
+.rdump-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(2px);
+  animation: rdump-lightbox-in var(--duration-fast) ease-out;
+}
+
+@keyframes rdump-lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.rdump-lightbox__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.55);
+  color: #f8fafc;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.rdump-lightbox__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rdump-lightbox__tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.rdump-lightbox__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: background var(--duration-fast) ease;
+}
+
+.rdump-lightbox__btn:hover {
+  background: rgba(248, 250, 252, 0.14);
+}
+
+.rdump-lightbox__btn--close:hover {
+  background: rgba(239, 68, 68, 0.85);
+  color: #fff;
+}
+
+.rdump-lightbox__pct {
+  min-width: 46px;
+  text-align: center;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: #cbd5e1;
+}
+
+.rdump-lightbox__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+}
+
+.rdump-lightbox__stage.is-dragging {
+  cursor: grabbing;
+}
+
+.rdump-lightbox__content {
+  will-change: transform;
+  user-select: none;
+  line-height: 0;
+}
+
+.rdump-lightbox__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: none;
+  max-height: none;
+  pointer-events: none;
+}
+
+.rdump-lightbox__svg {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.rdump-lightbox__svg svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.rdump-lightbox__hint {
+  margin: 0;
+  padding: 8px 14px 12px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(226, 232, 240, 0.7);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rdump-lightbox {
+    animation: none;
+  }
+}

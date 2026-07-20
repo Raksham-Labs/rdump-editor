@@ -1,0 +1,59 @@
+/* Inline page-link chip — sibling of the mention pill, but clickable and
+   with a page icon so links and people read differently at a glance. */
+.rdump-pagelink {
+  display: inline;
+  white-space: nowrap;
+}
+
+.rdump-pagelink__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 100%;
+  margin: 0 1px;
+  padding: 0.05em 0.3em;
+  border: 0;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent-text, var(--accent));
+  font: inherit;
+  font-weight: 500;
+  line-height: inherit;
+  vertical-align: baseline;
+  cursor: pointer;
+}
+
+.rdump-pagelink__btn:hover .rdump-pagelink__label {
+  text-decoration: underline;
+}
+
+.rdump-pagelink__icon {
+  flex: 0 0 auto;
+  opacity: 0.7;
+}
+
+.rdump-pagelink__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Target page is gone (deleted, or an id from another workspace). */
+.rdump-pagelink[data-missing="true"] .rdump-pagelink__btn {
+  background: var(--muted-bg);
+  color: var(--muted);
+  cursor: default;
+}
+
+.rdump-pagelink[data-missing="true"] .rdump-pagelink__btn:hover .rdump-pagelink__label {
+  text-decoration: none;
+}
+
+/* Node selection (arrow-key or click-adjacent) highlight. */
+.rdump-pagelink.ProseMirror-selectednode .rdump-pagelink__btn {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.rdump-slash--pagelink {
+  width: 240px;
+}

@@ -1,0 +1,53 @@
+/* Hover card for rendered @mention chips — name + email, resolved from the
+   org users list. Matches the panel/popover aesthetic of LinkPopover. */
+
+.rdump-mention-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 260px;
+  padding: 7px 9px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
+  font-size: 12px;
+  pointer-events: auto;
+}
+
+.rdump-mention-card__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--muted-bg);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.rdump-mention-card__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.rdump-mention-card__name {
+  color: var(--foreground);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rdump-mention-card__email {
+  color: var(--muted-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
