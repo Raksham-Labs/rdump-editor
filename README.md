@@ -12,6 +12,11 @@ pnpm add @rakshamlabs/rdump-editor   # or: npm install / yarn add
 ```
 
 - Requires `react` and `react-dom` ^19 (peer dependencies).
+- Tiptap and ProseMirror are **vendored into the package** (types included) —
+  never add `@tiptap/*` or `prosemirror-*` to your own dependencies; a second
+  install would mean a second ProseMirror instance. Import any Tiptap
+  primitives you need from this package (see
+  [Custom extensions](#custom-extensions)).
 - Import the stylesheet once, app-wide: `import "@rakshamlabs/rdump-editor/styles.css";`
 - If you enable `features.math`, also import KaTeX's stylesheet (katex ships
   with this package): `import "katex/dist/katex.min.css";`
@@ -120,8 +125,9 @@ const PageBreak = Node.create({ /* … */ });
 ```
 
 Import Tiptap primitives from this package, not from `@tiptap/*` directly —
-two Tiptap installations means two ProseMirror instances and subtle schema
-breakage.
+the package vendors its entire Tiptap/ProseMirror graph, so a separately
+installed `@tiptap/*` would be a second ProseMirror instance with subtle
+schema breakage.
 
 ## Theming
 

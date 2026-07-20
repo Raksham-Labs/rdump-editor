@@ -1,6 +1,6 @@
 {
   "name": "@rakshamlabs/rdump-editor",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Markdown-first rich text editor: Tiptap-based writing surface with markdown/HTML/JSON round-trip, tables, tasks, math, mermaid, charts, mentions and page links — configurable per feature, lazy-loaded per flag.",
   "license": "MIT",
   "type": "module",
@@ -21,7 +21,7 @@
   },
   "scripts": {
     "dev": "vite --config playground/vite.config.ts",
-    "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && rollup -c rollup.dts.config.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "preview:dist": "vite build && vite --config playground/vite.config.ts --mode dist",
     "test": "vitest run",
@@ -32,9 +32,20 @@
     "react-dom": "^19.0.0"
   },
   "dependencies": {
+    "katex": "0.16.45",
+    "lowlight": "^3.3.0",
+    "lucide-react": "^1.14.0",
+    "markdown-it": "^14.1.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "mermaid": "11.15.0",
+    "recharts": "3.8.1"
+  },
+  "devDependencies": {
     "@tiptap/core": "3.23.1",
     "@tiptap/extension-character-count": "3.23.1",
+    "@tiptap/extension-code-block": "3.23.1",
     "@tiptap/extension-code-block-lowlight": "3.23.1",
+    "@tiptap/extensions": "3.23.1",
     "@tiptap/extension-details": "3.23.1",
     "@tiptap/extension-drag-handle-react": "3.23.1",
     "@tiptap/extension-highlight": "3.23.1",
@@ -55,16 +66,9 @@
     "@tiptap/react": "3.23.1",
     "@tiptap/starter-kit": "3.23.1",
     "@tiptap/suggestion": "3.23.1",
-    "katex": "0.16.45",
-    "lowlight": "^3.3.0",
-    "lucide-react": "^1.14.0",
-    "markdown-it": "^14.1.0",
-    "markdown-it-task-lists": "^2.1.1",
-    "mermaid": "11.15.0",
     "prosemirror-markdown": "^1.13.1",
-    "recharts": "3.8.1"
-  },
-  "devDependencies": {
+    "rollup": "^4.24.0",
+    "rollup-plugin-dts": "^6.1.1",
     "@types/node": "^26.1.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -88,6 +92,31 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "pnpm": {
+    "overrides": {
+      "@tiptap/extension-blockquote": "3.23.1",
+      "@tiptap/extension-bold": "3.23.1",
+      "@tiptap/extension-bubble-menu": "3.23.1",
+      "@tiptap/extension-bullet-list": "3.23.1",
+      "@tiptap/extension-code-block": "3.23.1",
+      "@tiptap/extension-document": "3.23.1",
+      "@tiptap/extension-dropcursor": "3.23.1",
+      "@tiptap/extension-floating-menu": "3.23.1",
+      "@tiptap/extension-gapcursor": "3.23.1",
+      "@tiptap/extension-hard-break": "3.23.1",
+      "@tiptap/extension-heading": "3.23.1",
+      "@tiptap/extension-horizontal-rule": "3.23.1",
+      "@tiptap/extension-italic": "3.23.1",
+      "@tiptap/extension-list": "3.23.1",
+      "@tiptap/extension-list-item": "3.23.1",
+      "@tiptap/extension-list-keymap": "3.23.1",
+      "@tiptap/extension-ordered-list": "3.23.1",
+      "@tiptap/extension-paragraph": "3.23.1",
+      "@tiptap/extension-strike": "3.23.1",
+      "@tiptap/extension-text": "3.23.1",
+      "@tiptap/extensions": "3.23.1"
+    }
   },
   "keywords": [
     "editor",

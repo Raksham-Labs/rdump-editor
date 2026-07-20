@@ -6,12 +6,38 @@ import { fileURLToPath } from "node:url";
 
 const projectDir = dirname(fileURLToPath(import.meta.url));
 
+// The package's entire runtime dependency surface. Everything NOT listed
+// here — notably the whole @tiptap/* + prosemirror-* graph and
+// tiptap-markdown — is vendored into dist. Rationale: tiptap packages
+// depend on each other through caret ranges, so a consumer install can
+// resolve sibling extensions to a NEWER tiptap than the pinned core (pnpm
+// auto-installed peers can't even be overridden consumer-side). That mixed
+// tree risks a second ProseMirror instance — the exact breakage the README
+// warns hosts about. Vendoring freezes one consistent tiptap graph inside
+// the package. Keep this list in sync with package.json
+// dependencies/peerDependencies and with rollup.dts.config.mjs.
+export const EXTERNAL_RUNTIME_PACKAGES = [
+  "react",
+  "react-dom",
+  "katex",
+  "lowlight",
+  "lucide-react",
+  "markdown-it",
+  "markdown-it-task-lists",
+  "mermaid",
+  "recharts",
+];
+
+const isExternalPackage = (id: string) =>
+  EXTERNAL_RUNTIME_PACKAGES.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
+
 // Library build. Key choices:
 // - ESM only, preserveModules: every source module stays its own output file,
 //   so the feature modules' dynamic import() boundaries survive verbatim and
 //   the CONSUMER's bundler does the code-splitting (that's what keeps katex /
 //   lowlight / mermaid / recharts out of a host bundle when the flags are off).
-// - Every bare specifier is external — the package ships no vendored deps.
+// - Only EXTERNAL_RUNTIME_PACKAGES stay external; the tiptap graph is
+//   vendored (see above).
 // - cssCodeSplit off: all component CSS aggregates, in import order, into a
 //   single dist/styles.css that hosts import once.
 // - rollup-preserve-directives keeps the "use client" directives on each
@@ -28,27 +54,25 @@ export default defineConfig({
     minify: false,
     sourcemap: true,
     rollupOptions: {
-      // tiptap-markdown is bundled (not external): it imports @tiptap/pm/*
-      // without declaring @tiptap/pm as a peer, which breaks resolution in
-      // strict installs (pnpm on Vercel). Bundling moves those imports into
-      // our own modules, where @tiptap/pm is a properly declared dependency.
-      // Its other imports (markdown-it, prosemirror-markdown, …) stay
-      // external and are declared in our dependencies.
       external: (id) =>
-        id !== "tiptap-markdown" &&
         !id.startsWith(".") &&
         !id.startsWith("\0") &&
-        !isAbsolute(id),
+        !isAbsolute(id) &&
+        isExternalPackage(id),
       output: {
         preserveModules: true,
         preserveModulesRoot: "src",
-        // Bundled third-party modules (tiptap-markdown) must not emit under
+        // Vendored third-party modules must not emit under
         // dist/node_modules/... — npm and host bundlers special-case that
-        // directory name. Flatten them into vendor/ instead.
-        entryFileNames: (chunk) =>
-          chunk.name.includes("node_modules")
-            ? `vendor/${chunk.name.split("/").pop()}.js`
-            : "[name].js",
+        // directory name. Re-root each module at vendor/<pkg>/… keeping its
+        // package-relative path (many vendored packages have an index.js, so
+        // flattening by basename would collide).
+        entryFileNames: (chunk) => {
+          const marker = "node_modules/";
+          const idx = chunk.name.lastIndexOf(marker);
+          if (idx === -1) return "[name].js";
+          return `vendor/${chunk.name.slice(idx + marker.length)}.js`;
+        },
         assetFileNames: "styles[extname]",
       },
     },
