@@ -1,6 +1,6 @@
 {
   "name": "@rakshamlabs/rdump-editor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Markdown-first rich text editor: Tiptap-based writing surface with markdown/HTML/JSON round-trip, tables, tasks, math, mermaid, charts, mentions and page links — configurable per feature, lazy-loaded per flag.",
   "license": "MIT",
   "type": "module",
@@ -60,7 +60,9 @@
     "lucide-react": "^1.14.0",
     "mermaid": "11.15.0",
     "recharts": "3.8.1",
-    "tiptap-markdown": "^0.9.0"
+    "markdown-it": "^14.1.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "prosemirror-markdown": "^1.13.1"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
@@ -73,7 +75,8 @@
     "rollup-preserve-directives": "^1.1.3",
     "typescript": "^5",
     "vite": "^6.0.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "tiptap-markdown": "^0.9.0"
   },
   "repository": {
     "type": "git",

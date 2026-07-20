@@ -28,11 +28,27 @@ export default defineConfig({
     minify: false,
     sourcemap: true,
     rollupOptions: {
-      external: (id) => !id.startsWith(".") && !id.startsWith("\0") && !isAbsolute(id),
+      // tiptap-markdown is bundled (not external): it imports @tiptap/pm/*
+      // without declaring @tiptap/pm as a peer, which breaks resolution in
+      // strict installs (pnpm on Vercel). Bundling moves those imports into
+      // our own modules, where @tiptap/pm is a properly declared dependency.
+      // Its other imports (markdown-it, prosemirror-markdown, …) stay
+      // external and are declared in our dependencies.
+      external: (id) =>
+        id !== "tiptap-markdown" &&
+        !id.startsWith(".") &&
+        !id.startsWith("\0") &&
+        !isAbsolute(id),
       output: {
         preserveModules: true,
         preserveModulesRoot: "src",
-        entryFileNames: "[name].js",
+        // Bundled third-party modules (tiptap-markdown) must not emit under
+        // dist/node_modules/... — npm and host bundlers special-case that
+        // directory name. Flatten them into vendor/ instead.
+        entryFileNames: (chunk) =>
+          chunk.name.includes("node_modules")
+            ? `vendor/${chunk.name.split("/").pop()}.js`
+            : "[name].js",
         assetFileNames: "styles[extname]",
       },
     },
