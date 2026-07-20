@@ -1,4 +1,4 @@
-import { markInputRule, type AnyExtension } from "@tiptap/core";
+import { Extension, markInputRule, type AnyExtension } from "@tiptap/core";
 import Highlight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -10,6 +10,31 @@ import { Markdown } from "tiptap-markdown";
 import type { ResolvedEditorConfig } from "./config";
 import { RuntimeBridge, type EditorRuntime } from "./runtime";
 import { SlashCommand } from "./SlashCommand";
+
+// See its entry in the extension list below for the why.
+const CodeMarkExit = Extension.create({
+  name: "codeMarkExit",
+  priority: 1000,
+
+  addKeyboardShortcuts() {
+    return {
+      ArrowRight: ({ editor }) => {
+        const { state } = editor;
+        const { empty, $from } = state.selection;
+        if (!empty) return false;
+        const code = state.schema.marks.code;
+        if (!code) return false;
+        const marks = state.storedMarks ?? $from.marks();
+        if (!code.isInSet(marks)) return false;
+        // Anywhere before the end of the block, normal caret movement
+        // already leads out of the mark — only the trapped case is ours.
+        if ($from.parentOffset < $from.parent.content.size) return false;
+        editor.view.dispatch(state.tr.removeStoredMark(code));
+        return true;
+      },
+    };
+  },
+});
 
 // Assembles the extension list for a config. Feature modules are imported
 // dynamically and ONLY when their flag is on — that's what keeps heavy
@@ -62,6 +87,16 @@ export async function loadExtensions(
       link: false,
       underline: false,
     }),
+    // Keyboard escape from inline code's trailing-edge trap: the mark is
+    // inclusive (typing at its end must extend it — that's how you write
+    // code), but at the end of a block that means every keystroke stays code
+    // and only re-toggling gets you out. ArrowRight with nowhere left to go
+    // clears the stored mark so the next character is plain. Lives in its
+    // own high-priority extension: the Details extension also binds
+    // ArrowRight and consumes it first at default priority, and raising the
+    // Code mark's own priority would reorder mark rendering (a serialization
+    // change).
+    CodeMarkExit,
     Underline,
     // The bundled Highlight input rule requires the `==` to follow start-of-
     // line or whitespace, so `w==a==tt` never highlights mid-word. Override

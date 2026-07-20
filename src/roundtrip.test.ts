@@ -88,6 +88,60 @@ describe("content formats", () => {
   });
 });
 
+describe("inline code exit", () => {
+  it("ArrowRight at the end of a block clears the code mark for further typing", async () => {
+    const extensions = await loadExtensions(resolveConfig(), createDefaultRuntime());
+    const editor = new Editor({
+      element: document.createElement("div"),
+      extensions,
+      content: "<p>run <code>pnpm i</code></p>",
+    });
+    try {
+      // Caret at the very end of the paragraph — inside the code mark's
+      // trailing edge, where typing would otherwise keep extending it.
+      editor.commands.setTextSelection(editor.state.doc.content.size - 1);
+      expect(editor.isActive("code")).toBe(true);
+
+      // Real keydown path. (commands.keyboardShortcut can't be used here:
+      // it wraps handlers in captureTransaction, which replays doc steps
+      // only — a stored-mark change has none and gets swallowed.)
+      const handled = editor.view.someProp("handleKeyDown", (f) =>
+        f(editor.view, new KeyboardEvent("keydown", { key: "ArrowRight" })),
+      );
+      expect(handled).toBe(true);
+      expect(editor.isActive("code")).toBe(false);
+
+      editor.commands.insertContent("x");
+      expect(editor.getHTML()).toContain("<code>pnpm i</code>x");
+    } finally {
+      editor.destroy();
+    }
+  });
+
+  it("leaves the mark alone mid-block", async () => {
+    const extensions = await loadExtensions(resolveConfig(), createDefaultRuntime());
+    const editor = new Editor({
+      element: document.createElement("div"),
+      extensions,
+      content: "<p><code>ab</code> tail</p>",
+    });
+    try {
+      // Caret inside the code span with more text following: the escape must
+      // not fire (other extensions may still consume the key — Details binds
+      // ArrowRight too — so assert on mark state, not event handling).
+      editor.commands.setTextSelection(2);
+      expect(editor.isActive("code")).toBe(true);
+      editor.view.someProp("handleKeyDown", (f) =>
+        f(editor.view, new KeyboardEvent("keydown", { key: "ArrowRight" })),
+      );
+      expect(editor.state.storedMarks).toBeNull();
+      expect(editor.isActive("code")).toBe(true);
+    } finally {
+      editor.destroy();
+    }
+  });
+});
+
 describe("feature gating", () => {
   const FENCES = "# Doc\n\n```mermaid\ngraph TD\n  A --> B\n```\n";
 
