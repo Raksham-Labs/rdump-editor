@@ -156,21 +156,29 @@ node identity. Don't turn features off for content you intend to keep.
 <RDumpEditor themeVars={{ accent: "#7c3aed" }} … />     // per-instance token overrides
 ```
 
-`theme="auto"` follows the OS preference. Every color token is a CSS
-`light-dark()` pair, so both palettes ship in one stylesheet and the editor
-(including its popovers) flips with the prop — native controls like task
-checkboxes follow via `color-scheme`.
+`theme="auto"` follows the OS preference. Both palettes ship in one
+stylesheet: the light tokens sit on `:root`, and the dark palette is
+re-declared under the wrapper's `data-rdump-color-scheme` attribute (which
+the `theme` prop controls), so the editor — including its popovers — flips
+with the prop. Native controls like task checkboxes follow via
+`color-scheme`. (Deliberately not `light-dark()` pairs at `:root`: CSS
+processors that polyfill `light-dark()`, like Lightning CSS under
+Next.js/Turbopack, break custom properties declared outside a
+`color-scheme` scope — see the header of `theme.css`.)
 
 Customization layers:
 
 1. **Built-in palettes** — nothing to do.
 2. **App-wide CSS** — the tokens are declared at zero specificity
-   (`:where(:root)`), so defining any of them in your own CSS wins:
+   (`:where(:root)`), so defining any of them in your own CSS wins for the
+   light palette; retheme the dark palette on the attribute selector:
 
    ```css
    :root {
-     --accent: #7c3aed;                       /* fixed in both modes */
-     --panel: light-dark(#ffffff, #101014);   /* per-mode pair */
+     --accent: #7c3aed;                       /* light palette (and dark, if you don't override below) */
+   }
+   [data-rdump-color-scheme="dark"] {
+     --accent: #a78bfa;                       /* dark palette */
    }
    ```
 
@@ -224,10 +232,15 @@ Example — a violet brand accent with a warmer dark surface, app-wide:
 
 ```css
 :root {
-  --accent: light-dark(#7c3aed, #a78bfa);
-  --accent-hover: light-dark(#6d28d9, #c4b5fd);
-  --accent-soft: light-dark(#f5f3ff, rgba(167, 139, 250, 0.14));
-  --background: light-dark(#ffffff, #131017);
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-soft: #f5f3ff;
+}
+[data-rdump-color-scheme="dark"] {
+  --accent: #a78bfa;
+  --accent-hover: #c4b5fd;
+  --accent-soft: rgba(167, 139, 250, 0.14);
+  --background: #131017;
 }
 ```
 

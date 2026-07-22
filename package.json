@@ -1,6 +1,6 @@
 {
   "name": "@rakshamlabs/rdump-editor",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Markdown-first rich text editor: Tiptap-based writing surface with markdown/HTML/JSON round-trip, tables, tasks, math, mermaid, charts, mentions and page links — configurable per feature, lazy-loaded per flag.",
   "license": "MIT",
   "type": "module",

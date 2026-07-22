@@ -158,11 +158,50 @@
   flex-shrink: 0;
 }
 
+/* Custom-drawn checkbox instead of the native control: hosts publish task
+   lists with `disabled` inputs (read-only pages), and browsers force-grey a
+   disabled native checkbox — accent-color is ignored — so the published box
+   stopped matching the editor's. With appearance: none the browser paints
+   nothing; every state below renders identically whether the input is
+   disabled or live, across browsers and platforms. */
 .rdump-content ul[data-type="taskList"] input[type="checkbox"] {
+  appearance: none;
   height: 14px;
   width: 14px;
-  accent-color: var(--accent);
   margin: 0;
+  flex-shrink: 0;
+  display: inline-grid;
+  place-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  background: var(--panel);
+  cursor: pointer;
+}
+
+.rdump-content ul[data-type="taskList"] input[type="checkbox"]:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.rdump-content ul[data-type="taskList"] input[type="checkbox"]:checked::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  background: var(--accent-fg);
+  clip-path: polygon(14% 44%, 0 62%, 40% 100%, 100% 18%, 84% 4%, 38% 71%);
+}
+
+.rdump-content ul[data-type="taskList"] input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--accent-soft-strong);
+  outline-offset: 1px;
+}
+
+/* Frozen (published) checkboxes: same paint as live ones, just no pointer
+   affordance. Opacity explicitly pinned — some browsers dim any disabled
+   form control even when appearance is none. */
+.rdump-content ul[data-type="taskList"] input[type="checkbox"]:disabled {
+  opacity: 1;
+  cursor: default;
 }
 
 .rdump-content ul[data-type="taskList"] li > div {
