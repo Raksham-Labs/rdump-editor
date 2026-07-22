@@ -1,5 +1,4 @@
 import { InputRule, Mark, markPasteRule, mergeAttributes } from "@tiptap/core";
-import "./Hashtag.css";
 
 const HASHTAG_INPUT = /(?:^|\s)(#[\w-]{1,40})$/;
 const HASHTAG_PASTE = /(?:^|\s)(#[\w-]{1,40})(?=\s|$)/g;

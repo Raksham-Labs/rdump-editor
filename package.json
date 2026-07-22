@@ -1,6 +1,6 @@
 {
   "name": "@rakshamlabs/rdump-editor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Markdown-first rich text editor: Tiptap-based writing surface with markdown/HTML/JSON round-trip, tables, tasks, math, mermaid, charts, mentions and page links — configurable per feature, lazy-loaded per flag.",
   "license": "MIT",
   "type": "module",
@@ -17,11 +17,12 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./content.css": "./dist/content.css"
   },
   "scripts": {
     "dev": "vite --config playground/vite.config.ts",
-    "build": "vite build && tsc -p tsconfig.build.json --emitDeclarationOnly && rollup -c rollup.dts.config.mjs",
+    "build": "vite build && node scripts/build-content-css.mjs && tsc -p tsconfig.build.json --emitDeclarationOnly && rollup -c rollup.dts.config.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "preview:dist": "vite build && vite --config playground/vite.config.ts --mode dist",
     "test": "vitest run",

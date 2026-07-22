@@ -18,6 +18,10 @@ pnpm add @rakshamlabs/rdump-editor   # or: npm install / yarn add
   primitives you need from this package (see
   [Custom extensions](#custom-extensions)).
 - Import the stylesheet once, app-wide: `import "@rakshamlabs/rdump-editor/styles.css";`
+- Pages that only **render** exported HTML — no editor mounted — can import
+  the much smaller `@rakshamlabs/rdump-editor/content.css` instead and wrap
+  the HTML in `class="rdump-content"` — see
+  [Rendering serialized content](#rendering-serialized-content).
 - If you enable `features.math`, also import KaTeX's stylesheet (katex ships
   with this package): `import "katex/dist/katex.min.css";`
 - Ships as ESM with `"use client"` directives — works in Vite, Next.js App
@@ -83,6 +87,34 @@ import "katex/dist/katex.min.css"; // only if features.math is on
   ` ```chart ` fences.
 - Serialization is deterministic (`-` bullets, tight lists) so content hashes
   are stable across sessions.
+
+## Rendering serialized content
+
+`getHTML()` output (or `contentFormat="html"` saves) can be rendered on pages
+that never load the editor — and look exactly like it did in the editor —
+with the standalone document skin:
+
+```tsx
+import "@rakshamlabs/rdump-editor/content.css"; // theme tokens + document skin, no chrome
+
+<div className="rdump-content" data-rdump-color-scheme="light"
+     dangerouslySetInnerHTML={{ __html: savedHtml }} />
+```
+
+- `content.css` is the same stylesheet the editor's writing surface uses (its
+  ProseMirror root carries `rdump-content` too), so editor and rendered page
+  can't drift apart. It contains zero chrome — no toolbar, menus, or popover
+  CSS — and weighs a fraction of `styles.css`.
+- `data-rdump-color-scheme` (`"light" | "dark" | "auto"`) picks the palette,
+  same as the editor's `theme` prop. Tokens overridden on your `:root` apply
+  here exactly as they do in the editor — see [Theming](#theming).
+- Don't import `content.css` on pages that already import `styles.css` —
+  `styles.css` includes all of it.
+- Sanitizing hosts: the skin keys off stable hooks in the serialized HTML —
+  `class` values starting with `rdump-` plus `data-type`, `data-variant`,
+  `data-checked`, `data-align`, and `data-latex` — keep those (and `<details
+  open>`, image `width`/`height`) through your sanitizer.
+- If the content can contain math, also import `katex/dist/katex.min.css`.
 
 ## Config
 

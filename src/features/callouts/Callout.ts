@@ -1,5 +1,4 @@
 import { Node, mergeAttributes } from "@tiptap/core";
-import "./Callout.css";
 
 export type CalloutVariant = "info" | "warning" | "success" | "danger";
 

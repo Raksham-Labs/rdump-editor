@@ -4,6 +4,11 @@
 // rely on them; a host's own :root definitions always win (theme.css uses
 // zero-specificity :where()).
 import "./styles/theme.css";
+// Document skin next, chrome CSS after it — editor-side overrides of shared
+// content rules (e.g. the code block node view's inner <pre>) depend on this
+// order at equal specificity. Also published standalone as content.css for
+// hosts that render serialized content without the editor.
+import "./styles/content.css";
 
 export { Editor as RDumpEditor } from "./Editor";
 export type {

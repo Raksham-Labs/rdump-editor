@@ -1,3 +1,8 @@
+/* Editor chrome and editing affordances ONLY. Everything that decides what
+   the DOCUMENT looks like (typography, callouts, tables, task lists, …)
+   lives in styles/content.css, shared with hosts that render serialized
+   content — keep the split honest or the two surfaces drift. */
+
 .rdump-editor-wrap {
   display: flex;
   flex-direction: column;
@@ -177,149 +182,20 @@
   cursor: text;
 }
 
+/* Editor column layout. The document's own typography (font, color,
+   block spacing) comes from .rdump-content, which the ProseMirror root
+   carries alongside this class. */
 .rdump-editor {
   margin: 0 auto;
   max-width: 760px;
   width: 100%;
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--foreground);
   outline: none;
 }
 
-.rdump-editor > * + * {
-  margin-top: 0.8em;
-}
-
-.rdump-editor h1 {
-  font-size: 2.25rem;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-top: 0.2em;
-}
-
-.rdump-editor h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-top: 1.6em;
-  line-height: 1.25;
-}
-
-.rdump-editor h3 {
-  font-size: 1.18rem;
-  font-weight: 600;
-  margin-top: 1.4em;
-  line-height: 1.3;
-}
-
-.rdump-editor p {
-  color: var(--foreground);
-}
-
-.rdump-editor a {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.rdump-editor ul,
-.rdump-editor ol {
-  padding-left: 1.6rem;
-}
-
-.rdump-editor ul {
-  list-style-type: disc;
-}
-
-.rdump-editor ul ul {
-  list-style-type: circle;
-}
-
-.rdump-editor ul ul ul {
-  list-style-type: square;
-}
-
-.rdump-editor ol {
-  list-style-type: decimal;
-}
-
-.rdump-editor ol ol {
-  list-style-type: lower-alpha;
-}
-
-.rdump-editor ol ol ol {
-  list-style-type: lower-roman;
-}
-
-.rdump-editor li {
-  padding-left: 0.15rem;
-}
-
-.rdump-editor li::marker {
-  color: var(--muted);
-}
-
-.rdump-editor li + li {
-  margin-top: 0.25em;
-}
-
-.rdump-editor li > p {
-  margin: 0;
-}
-
-/* Tiptap-example quote: a neutral bar and full-contrast text, no tinted
-   fill — the old accent-soft slab washed the muted text out, most visibly
-   in dark mode. */
-.rdump-editor blockquote {
-  border-left: 3px solid var(--muted);
-  /* Zero inline margin: the UA default (1em 40px) indented quotes from both
-     sides relative to every other block. */
-  margin: 1em 0;
-  padding: 0.4rem 0.9rem;
-}
-
-/* Inline code as a visible chip: theme background plus a real border so it
-   stands out from body text (the bare light fill read as barely-there). */
-.rdump-editor code {
-  background: light-dark(#f5f5f5, #1d1d21);
-  /* The dark fill is close to the page surface, so the chip's definition
-     comes from the border — the strong tone, or it melts away. */
-  border: 1px solid light-dark(#e5e5e5, #3f3f49);
-  border-radius: 6px;
-  padding: 0.1em 0.3em;
-  font-family: var(--font-mono);
-  font-size: 0.85em;
-  color: var(--foreground);
-}
-
-/* Code blocks stay dark in both schemes (the hljs palette is a dark-bg
-   palette), but the fill/border pair is per-scheme: navy on a light page,
-   and in dark mode an elevated panel gray with a visible border — flat navy
-   was indistinguishable from the #0e0e11 surface. */
-.rdump-editor pre {
-  background: light-dark(#0f172a, #1b1b20);
-  border: 1px solid light-dark(#1e293b, #33333c);
-  color: #e2e8f0;
-  padding: 14px 16px;
-  border-radius: 8px;
-  overflow-x: auto;
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-  line-height: 1.6;
-}
-
-.rdump-editor pre code {
-  background: transparent;
-  border: 0;
-  color: inherit;
-  padding: 0;
-  font-size: inherit;
-}
-
 /* Code block chrome — language label + copy button rendered above the
-   <pre> by the React NodeView. The pre underneath loses its own rounded
-   corners on top so the header sits flush. */
-.rdump-codeblock {
+   <pre> by the React NodeView. Prefixed with .rdump-editor so these editor
+   overrides always beat content.css regardless of stylesheet order. */
+.rdump-editor .rdump-codeblock {
   margin: 1rem 0;
   border-radius: 8px;
   background: light-dark(#0f172a, #1b1b20);
@@ -328,7 +204,7 @@
   position: relative;
 }
 
-.rdump-codeblock__header {
+.rdump-editor .rdump-codeblock__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -340,7 +216,7 @@
   user-select: none;
 }
 
-.rdump-codeblock__lang {
+.rdump-editor .rdump-codeblock__lang {
   background: transparent;
   color: #cbd5f5;
   border: 1px solid transparent;
@@ -356,23 +232,23 @@
     background var(--duration-fast) ease;
 }
 
-.rdump-codeblock__lang:hover,
-.rdump-codeblock__lang:focus {
+.rdump-editor .rdump-codeblock__lang:hover,
+.rdump-editor .rdump-codeblock__lang:focus {
   border-color: rgba(255, 255, 255, 0.16);
   background: rgba(255, 255, 255, 0.04);
   outline: none;
 }
 
-.rdump-codeblock__lang--static {
+.rdump-editor .rdump-codeblock__lang--static {
   cursor: default;
 }
 
-.rdump-codeblock__lang option {
+.rdump-editor .rdump-codeblock__lang option {
   background: light-dark(#111c2e, #232329);
   color: #e2e8f0;
 }
 
-.rdump-codeblock__copy {
+.rdump-editor .rdump-codeblock__copy {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -387,44 +263,25 @@
   transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
 }
 
-.rdump-codeblock__copy:hover {
+.rdump-editor .rdump-codeblock__copy:hover {
   background: rgba(255, 255, 255, 0.06);
   color: #f8fafc;
 }
 
-.rdump-codeblock__copy svg {
+.rdump-editor .rdump-codeblock__copy svg {
   flex-shrink: 0;
 }
 
 /* The <pre> inside the React NodeView wrapper shares the wrapper's rounded
    corners and border — disable its own so the seam under the header is
    clean and the edge isn't doubled. */
-.rdump-codeblock pre {
+.rdump-editor .rdump-codeblock pre {
   margin: 0;
   border-radius: 0;
   border: 0;
 }
 
-/* No padding: any inline padding shifts the surrounding text horizontally
-   and paints over adjacent lines, so a highlight must occupy exactly the
-   text's own box. Colored highlights carry an inline background-color which
-   overrides this fallback. The text color is forced dark (!important beats
-   the extension's inline `color: inherit`) because the swatch palette is
-   pastel — in dark mode inherited light text on a pastel fill would be
-   unreadable; in light mode this matches the normal foreground anyway. */
-.rdump-editor mark {
-  border-radius: 2px;
-  background: #fff3bf;
-  color: #262626 !important;
-}
-
-.rdump-editor hr {
-  border: 0;
-  /* border-strong: the plain --border tone all but vanished against the
-     dark background. */
-  border-top: 1px solid var(--border-strong);
-  margin: 2rem 0;
-}
+/* ---------- Table editing ---------- */
 
 /* The table wrapper (renderWrapper: true) keeps a wide table contained inside
    the editor — horizontal overflow scrolls inside the wrapper rather than
@@ -450,33 +307,14 @@
      widths to zero. */
 }
 
-.rdump-editor table {
-  border-collapse: collapse;
-  overflow: hidden;
-  border-radius: 6px;
-  box-shadow: 0 0 0 1px var(--border);
-  margin: 1.2rem 0;
-}
-
+/* Editing affordances on cells: room for resize overlays, a minimum column
+   width while typing, and explicitly selectable text. The visual cell style
+   (borders, padding, header fill) is content.css's. */
 .rdump-editor th,
 .rdump-editor td {
   min-width: 84px;
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  vertical-align: top;
   position: relative;
-  /* Wrap long words so a single huge word doesn't blow out the column width. */
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-.rdump-editor th {
-  background: var(--panel-subtle);
-  font-weight: 600;
-  /* Kill the UA's th centering: alignment defaults to left everywhere, so
-     the toolbar's "align left" (which resets to normal flow) actually
-     lands left — explicit center/right on the cell paragraph still wins. */
-  text-align: left;
+  user-select: text;
 }
 
 /* prosemirror-tables marks selected cells with .selectedCell — overlay an
@@ -495,13 +333,6 @@
   z-index: 2;
 }
 
-/* Ensure cell text remains selectable (Tailwind preflight is fine here, but
-   make it explicit so no global rule accidentally suppresses native selection). */
-.rdump-editor th,
-.rdump-editor td {
-  user-select: text;
-}
-
 .rdump-editor .column-resize-handle {
   position: absolute;
   right: 0;
@@ -517,64 +348,6 @@
 .rdump-editor.resize-cursor,
 .rdump-editor .resize-cursor {
   cursor: col-resize;
-}
-
-.rdump-editor ul[data-type="taskList"] {
-  list-style: none;
-  padding-left: 0;
-}
-
-.rdump-editor ul[data-type="taskList"] li {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-}
-
-/* Center the checkbox vertically within the first text line. The label box
-   takes the editor's line-height (1.7em) so the checkbox aligns with the
-   first line — same as Notion. For multi-line task text the checkbox stays
-   on the first line rather than the geometric middle of the block. */
-.rdump-editor ul[data-type="taskList"] li > label {
-  display: inline-flex;
-  align-items: center;
-  height: 1.7em;
-  padding: 0;
-  flex-shrink: 0;
-}
-
-.rdump-editor ul[data-type="taskList"] input[type="checkbox"] {
-  height: 14px;
-  width: 14px;
-  accent-color: var(--accent);
-  margin: 0;
-}
-
-.rdump-editor ul[data-type="taskList"] li > div {
-  flex: 1;
-  min-width: 0;
-}
-
-.rdump-editor ul[data-type="taskList"] li > div > p {
-  margin: 0;
-}
-
-.rdump-editor img.rdump-image {
-  max-width: 100%;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-}
-
-/* Image alignment — static HTML rendering (no node view): the img itself
-   carries data-align, so align it with auto margins. */
-.rdump-editor img.rdump-image[data-align="center"] {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.rdump-editor img.rdump-image[data-align="right"] {
-  display: block;
-  margin-left: auto;
 }
 
 /* ---------- Image resize (Tiptap ResizableNodeView) ----------
@@ -760,7 +533,8 @@
    lighter body row below. A single border wraps the whole block so the
    boundary is unambiguous. The wrapper div the extension injects between
    <button> and the summary/content is collapsed with `display: contents` so
-   summary and content can participate directly in the grid template areas. */
+   summary and content can participate directly in the grid template areas.
+   The serialized shape is native <details> — content.css styles that one. */
 .rdump-editor div[data-type="details"] {
   display: grid;
   grid-template-columns: 32px 1fr;
@@ -924,53 +698,8 @@
   font-size: 13px;
 }
 
-/* Math (KaTeX) — restrain font size so it matches body */
-.rdump-editor .katex {
-  font-size: 1.02em;
-}
-
-.rdump-editor .katex-display {
-  margin: 1.2em 0;
-}
-
-/* Code highlight tokens (lowlight) */
-.rdump-editor pre .hljs-comment,
-.rdump-editor pre .hljs-quote {
-  color: #94a3b8;
-  font-style: italic;
-}
-
-.rdump-editor pre .hljs-keyword,
-.rdump-editor pre .hljs-selector-tag,
-.rdump-editor pre .hljs-type {
-  color: #c4b5fd;
-}
-
-.rdump-editor pre .hljs-string,
-.rdump-editor pre .hljs-doctag {
-  color: #fda4af;
-}
-
-.rdump-editor pre .hljs-title,
-.rdump-editor pre .hljs-section {
-  color: #fde68a;
-}
-
-.rdump-editor pre .hljs-attr,
-.rdump-editor pre .hljs-built_in {
-  color: #93c5fd;
-}
-
-.rdump-editor pre .hljs-number,
-.rdump-editor pre .hljs-meta {
-  color: #86efac;
-}
-
 @media (max-width: 768px) {
   .rdump-editor-shell {
     padding: 28px 20px 64px;
-  }
-  .rdump-editor h1 {
-    font-size: 1.85rem;
   }
 }

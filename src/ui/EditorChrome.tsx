@@ -175,7 +175,10 @@ export function EditorChrome({
       content: parseStoredContent(initialContent),
       editorProps: {
         attributes: {
-          class: "rdump-editor",
+          // rdump-editor = column layout + editing affordances (Editor.css);
+          // rdump-content = the shared document skin (styles/content.css)
+          // that hosts also put on wrappers around serialized HTML.
+          class: "rdump-editor rdump-content",
           spellcheck: "true",
         },
         // Double-click an image to open it in the fullscreen zoom/pan viewer.
