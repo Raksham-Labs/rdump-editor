@@ -1,0 +1,66 @@
+/* Anchored dropdown row shared by the toolbar/bubble menus (block type,
+   alignment, highlight colors). The trigger is a regular ToolbarButton; the
+   popover opens below it. */
+
+.rdump-toolbar-menu {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.rdump-toolbar-menu__pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-popover);
+}
+
+/* Vertical variant: labeled rows (icon + text), Tiptap-example style. */
+.rdump-toolbar-menu__pop--list {
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 150px;
+}
+
+.rdump-toolbar-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--foreground);
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+.rdump-toolbar-menu__item:hover {
+  background: var(--muted-bg);
+}
+
+.rdump-toolbar-menu__item--active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.rdump-toolbar-menu__item svg {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.rdump-toolbar-menu__item--active svg {
+  color: var(--accent);
+}

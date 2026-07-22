@@ -1,0 +1,36 @@
+/* Highlight color picker — swatch styling; the popover shell comes from
+   ToolbarMenu.css, this row just spaces the dots a little wider. */
+
+.rdump-highlight-menu__row {
+  gap: 5px;
+  padding: 5px;
+}
+
+.rdump-highlight-menu__swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  width: 22px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+}
+
+.rdump-highlight-menu__swatch:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.rdump-highlight-menu__swatch--none {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted-strong);
+}
+
+.rdump-highlight-menu__swatch--none:hover {
+  color: var(--foreground);
+}

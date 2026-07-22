@@ -16,7 +16,8 @@ export interface EditorFeatureConfig {
   mermaid: boolean;
   charts: boolean;
   callouts: boolean;
-  details: boolean;
+  // The "Toggle" expand/collapse block (Tiptap's Details extension).
+  collapsible: boolean;
   hashtags: boolean;
   mentions: boolean;
   pageLinks: boolean;
@@ -75,7 +76,7 @@ export const DEFAULT_EDITOR_CONFIG: ResolvedEditorConfig = {
     mermaid: true,
     charts: true,
     callouts: true,
-    details: true,
+    collapsible: true,
     hashtags: true,
     mentions: true,
     pageLinks: true,

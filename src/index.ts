@@ -12,13 +12,14 @@ export type {
   EditorProps as RDumpEditorProps,
 } from "./Editor";
 export type { RDumpEditorConfig } from "./config";
+export type { RDumpEditorTheme, RDumpThemeVars, ThemeTokenName } from "./theme";
 export type {
   EditorNotify,
   MentionUser,
   NotifyLoadingHandle,
   PageRef,
 } from "./runtime";
-export { EDIT_MATH_EVENT, OPEN_IMAGE_PICKER_EVENT } from "./events";
+export { EDIT_MATH_EVENT, OPEN_IMAGE_PICKER_EVENT } from "./core/events";
 
 // Tiptap primitives re-exported so hosts can author extraExtensions against
 // the package's own Tiptap instance — installing @tiptap/* separately risks

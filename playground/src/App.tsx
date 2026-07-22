@@ -48,7 +48,7 @@ const FEATURE_KEYS = [
   "mermaid",
   "charts",
   "callouts",
-  "details",
+  "collapsible",
   "hashtags",
   "mentions",
   "pageLinks",
@@ -87,9 +87,15 @@ function loadFlags(): Flags {
   }
 }
 
+const THEME_KEY = "rdump-playground:theme";
+
 export function App() {
   const [tab, setTab] = useState<"editor" | "roundtrip">("editor");
   const [flags, setFlags] = useState<Flags>(loadFlags);
+  const [theme, setTheme] = useState<"light" | "dark" | "auto">(() => {
+    const saved = localStorage.getItem(THEME_KEY);
+    return saved === "dark" || saved === "auto" ? saved : "light";
+  });
   const [content, setContent] = useState(
     () => localStorage.getItem(DOC_KEY) ?? STARTER_DOC,
   );
@@ -136,6 +142,21 @@ export function App() {
           </button>
         </div>
 
+        <h2>theme</h2>
+        <select
+          className="pg-theme-select"
+          value={theme}
+          onChange={(event) => {
+            const next = event.target.value as "light" | "dark" | "auto";
+            setTheme(next);
+            localStorage.setItem(THEME_KEY, next);
+          }}
+        >
+          <option value="light">light</option>
+          <option value="dark">dark</option>
+          <option value="auto">auto (OS)</option>
+        </select>
+
         <h2>features</h2>
         {FEATURE_KEYS.map((key) => (
           <label key={key} className="pg-toggle">
@@ -175,6 +196,7 @@ export function App() {
             documentId="playground-doc"
             initialContent={content}
             config={config}
+            theme={theme}
             pages={DEMO_PAGES}
             onOpenPage={(id) => window.alert(`open page: ${id}`)}
             onUploadImage={uploadDemoImage}

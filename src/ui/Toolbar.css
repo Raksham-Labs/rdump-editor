@@ -1,0 +1,154 @@
+.rdump-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  z-index: 15;
+}
+
+.rdump-toolbar__btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--muted-strong);
+  transition: background var(--duration-fast) ease, color var(--duration-fast) ease;
+}
+
+/* Menu triggers: icon + small chevron, so they read as "opens a dropdown".
+   Auto width instead of the square 28px. */
+.rdump-toolbar__btn--menu {
+  width: auto;
+  padding: 0 4px 0 6px;
+  gap: 2px;
+}
+
+.rdump-toolbar__btn-chevron {
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+
+.rdump-toolbar__btn:hover {
+  background: var(--muted-bg);
+  color: var(--foreground);
+}
+
+.rdump-toolbar__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Inverted chip: foreground-colored fill with background-colored glyph, so
+   it reads in both schemes (dark-on-light chip in dark mode). A hardcoded
+   white glyph here was invisible on the near-white dark-mode fill. */
+.rdump-toolbar__btn[data-active="true"] {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.rdump-toolbar__divider {
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.rdump-toolbar__select {
+  height: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--muted-strong);
+  background: var(--panel);
+}
+
+/* Custom tooltip card. Anchored at the button's left edge by default (so
+   leftmost buttons don't clip off the viewport); the arrow is pinned to
+   the button center. Trailing buttons (last 3) flip to right-anchor so
+   they don't overflow off the right side. Hidden on touch — no hover. */
+.rdump-toolbar__tip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: max-content;
+  max-width: min(220px, calc(100vw - 24px));
+  padding: 6px 9px;
+  background: var(--foreground);
+  color: var(--background);
+  border-radius: 6px;
+  font-size: 11.5px;
+  line-height: 1.35;
+  text-align: left;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-2px);
+  z-index: 60;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+  transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease,
+    visibility var(--duration-fast);
+}
+
+.rdump-toolbar__tip::before {
+  content: "";
+  position: absolute;
+  left: 14px;
+  bottom: 100%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-bottom-color: var(--foreground);
+}
+
+/* Trailing buttons: flip the tip to right-anchor so it doesn't run off
+   the right edge of the toolbar. */
+.rdump-toolbar__btn:nth-last-child(-n+3) .rdump-toolbar__tip {
+  left: auto;
+  right: 0;
+}
+.rdump-toolbar__btn:nth-last-child(-n+3) .rdump-toolbar__tip::before {
+  left: auto;
+  right: 14px;
+  transform: translateX(50%);
+}
+
+.rdump-toolbar__tip-title {
+  font-weight: 600;
+  font-size: 12px;
+  color: inherit;
+}
+
+.rdump-toolbar__tip-desc {
+  color: inherit;
+  opacity: 0.72;
+  font-size: 11px;
+}
+
+@media (hover: hover) {
+  .rdump-toolbar__btn:hover:not(:disabled) .rdump-toolbar__tip,
+  .rdump-toolbar__btn:focus-visible:not(:disabled) .rdump-toolbar__tip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition-delay: 220ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rdump-toolbar__tip {
+    transition: none;
+  }
+}

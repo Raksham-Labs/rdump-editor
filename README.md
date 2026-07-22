@@ -49,24 +49,26 @@ import "katex/dist/katex.min.css"; // only if features.math is on
 
 ## Props
 
-| Prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `initialContent` | `string` | required | Document body: markdown, stringified Tiptap JSON, or HTML — auto-detected by leading character, independent of `contentFormat`. |
-| `documentId` | `string` | auto | Stable unique id per document. Keys undo history, the edit baseline, and the image-migration guard when switching docs. Omit for single-document hosts. |
-| `contentFormat` | `"markdown" \| "json" \| "html"` | `"markdown"` | Serialization emitted by `onChange`/`onReady`. `"json"` is lossless for every node attribute; `"html"` is render-ready. |
-| `onChange` | `(serialized: string) => void` | — | Fires on every genuine edit (never on load/normalization) with the document in `contentFormat`. |
-| `onReady` | `(serialized: string) => void` | — | Fires once after init with the normalized serialization — persist this to avoid spurious dirty-state on reload. |
-| `editable` | `boolean` | `true` | Read-only mode when `false` (shows a lock banner unless `preview`). |
-| `authorName` | `string` | — | The document author's name, shown in the read-only banner ("Read-only document by …"). |
-| `preview` | `boolean` | `false` | Bare surface: no toolbar, banners, footer, or lightbox. For side-by-side panes. |
-| `config` | `RDumpEditorConfig` | all on | Feature/UI/behavior flags — see [Config](#config). Compared by value; inline literals are fine. |
-| `pages` | `PageRef[]` | — | `{ id, title }` list backing `[[` page links and `@` page mentions. Live titles update as this changes. |
-| `onOpenPage` | `(id: string) => void` | — | Called when a page-link chip is clicked. Absent ⇒ chips render but don't navigate. |
-| `onUploadImage` | `(file: File) => Promise<{ url: string }>` | — | External image storage. Absent ⇒ images stay inline as base64. Files over `behavior.maxImageBytes` always inline. |
-| `loadMentionUsers` | `() => Promise<MentionUser[]>` | — | `{ id, name, email }` list for `@` people mentions, fetched once and cached. Absent ⇒ pages-only mentions. |
-| `notify` | `EditorNotify` | console | Toast sink: `info/success/warning/error(msg)` + `loading(msg) → { dismiss }`. |
-| `extraExtensions` | `AnyExtension[]` | — | Host-authored Tiptap extensions — see [Custom extensions](#custom-extensions). Captured on mount; change `key` to swap. |
-| `ref` | `Ref<EditorHandle>` | — | Imperative export in any format: `getMarkdown()`, `getHTML()`, `getJSON()`, plus `tiptap` (the live instance) as an escape hatch. |
+| Prop | Type | Default | Example | Description |
+| --- | --- | --- | --- | --- |
+| `initialContent` | `string` | required | `"# Hello **world**"` | Document body: markdown, stringified Tiptap JSON, or HTML — auto-detected by leading character, independent of `contentFormat`. |
+| `documentId` | `string` | auto | `"doc-42"` | Stable unique id per document. Keys undo history, the edit baseline, and the image-migration guard when switching docs. Omit for single-document hosts. |
+| `contentFormat` | `"markdown" \| "json" \| "html"` | `"markdown"` | `contentFormat="json"` | Serialization emitted by `onChange`/`onReady`. `"json"` is lossless for every node attribute; `"html"` is render-ready. |
+| `onChange` | `(serialized: string) => void` | — | `(md) => save(md)` | Fires on every genuine edit (never on load/normalization) with the document in `contentFormat`. |
+| `onReady` | `(serialized: string) => void` | — | `(md) => setBaseline(md)` | Fires once after init with the normalized serialization — persist this to avoid spurious dirty-state on reload. |
+| `editable` | `boolean` | `true` | `editable={false}` | Read-only mode when `false` (shows a lock banner unless `preview`). |
+| `authorName` | `string` | — | `"Priya Sharma"` | The document author's name, shown in the read-only banner ("Read-only document by …"). |
+| `preview` | `boolean` | `false` | `preview` | Bare surface: no toolbar, banners, footer, or lightbox. For side-by-side panes. |
+| `config` | `RDumpEditorConfig` | all on | `{{ features: { mermaid: false } }}` | Feature/UI/behavior flags — see [Config](#config). Compared by value; inline literals are fine. |
+| `theme` | `"light" \| "dark" \| "auto"` | `"light"` | `theme="dark"` | Color scheme for this editor (chrome, content, and its popovers). `"auto"` follows the OS preference live — see [Theming](#theming). |
+| `themeVars` | `RDumpThemeVars` | — | `{{ accent: "#7c3aed" }}` | Per-instance theme token overrides, applied as inline CSS variables on the wrapper. Beats all stylesheet layers. Full token list in [Theming](#theming). |
+| `pages` | `PageRef[]` | — | `{[{ id: "p1", title: "Roadmap" }]}` | `{ id, title }` list backing `[[` page links and `@` page mentions. Live titles update as this changes. |
+| `onOpenPage` | `(id: string) => void` | — | `(id) => router.push(\`/p/${id}\`)` | Called when a page-link chip is clicked. Absent ⇒ chips render but don't navigate. |
+| `onUploadImage` | `(file: File) => Promise<{ url: string }>` | — | `(file) => api.upload(file)` | External image storage. Absent ⇒ images stay inline as base64. Files over `behavior.maxImageBytes` always inline. |
+| `loadMentionUsers` | `() => Promise<MentionUser[]>` | — | `() => api.listPeople()` | `{ id, name, email }` list for `@` people mentions, fetched once and cached. Absent ⇒ pages-only mentions. |
+| `notify` | `EditorNotify` | console | `myToastAdapter` | Toast sink: `info/success/warning/error(msg)` + `loading(msg) → { dismiss }`. |
+| `extraExtensions` | `AnyExtension[]` | — | `{[PageBreak]}` | Host-authored Tiptap extensions — see [Custom extensions](#custom-extensions). Captured on mount; change `key` to swap. |
+| `ref` | `Ref<EditorHandle>` | — | `ref={editorRef}` | Imperative export in any format: `getMarkdown()`, `getHTML()`, `getJSON()`, plus `tiptap` (the live instance) as an escape hatch. |
 
 ## Content model
 
@@ -92,7 +94,8 @@ config = {
     math,      // KaTeX (bring katex/dist/katex.min.css yourself)
     mermaid,   // diagram library loads only when a diagram renders
     charts,    // recharts loads only when a chart renders
-    callouts, details, hashtags,
+    callouts, hashtags,
+    collapsible, // "Toggle" expand/collapse blocks
     mentions,  // needs loadMentionUsers for people; pages work without it
     pageLinks, // needs pages / onOpenPage
   },
@@ -113,6 +116,101 @@ Disabling a feature a document already uses degrades that content on its next
 save — mermaid/chart fences degrade losslessly to plain code blocks, but
 HTML-based nodes (math, callouts, mentions, page links, toggles) lose their
 node identity. Don't turn features off for content you intend to keep.
+
+## Theming
+
+```tsx
+<RDumpEditor theme="dark" … />                          // "light" (default) | "dark" | "auto"
+<RDumpEditor themeVars={{ accent: "#7c3aed" }} … />     // per-instance token overrides
+```
+
+`theme="auto"` follows the OS preference. Every color token is a CSS
+`light-dark()` pair, so both palettes ship in one stylesheet and the editor
+(including its popovers) flips with the prop — native controls like task
+checkboxes follow via `color-scheme`.
+
+Customization layers:
+
+1. **Built-in palettes** — nothing to do.
+2. **App-wide CSS** — the tokens are declared at zero specificity
+   (`:where(:root)`), so defining any of them in your own CSS wins:
+
+   ```css
+   :root {
+     --accent: #7c3aed;                       /* fixed in both modes */
+     --panel: light-dark(#ffffff, #101014);   /* per-mode pair */
+   }
+   ```
+
+3. **`themeVars` prop** — inline overrides on that one editor instance,
+   beating both stylesheets. Keys are the token names without `--`
+   (typed as `RDumpThemeVars`); values are raw CSS — a color, a
+   `light-dark()` pair, a shadow list, a font stack.
+
+### Theme tokens
+
+Every token accepted by `themeVars` (and overridable as `--<token>` in CSS),
+with the built-in defaults per scheme:
+
+| Token | Light default | Dark default | Controls |
+| --- | --- | --- | --- |
+| `background` | `#ffffff` | `#0e0e11` | Editor surface behind the content. |
+| `panel` | `#ffffff` | `#16161a` | Toolbar, popovers, menus, dropdowns. |
+| `panel-subtle` | `#fafafa` | `#1b1b20` | Slightly recessed panels (default callout, table headers). |
+| `foreground` | `#171717` | `#ededef` | Primary text; fill of active/inverted chips. |
+| `foreground-soft` | `#2c2c2c` | `#d4d4d9` | Secondary long-form text (context menu items). |
+| `muted` | `#737373` | `#8f8f98` | Hint/placeholder text, inactive icons, blockquote bar. |
+| `muted-strong` | `#525252` | `#b9b9c1` | Stronger secondary text, default icon color. |
+| `muted-bg` | `#f5f5f5` | `#232329` | Hover fills and subtle tints. |
+| `border` | `#e5e5e5` | `#2b2b32` | Default hairlines and outlines. |
+| `border-strong` | `#d4d4d4` | `#3a3a43` | Emphasized hairlines (dividers, `hr`, resize handles). |
+| `accent` | `#3b82f6` | `#60a5fa` | Links, active states, primary buttons, focus rings. |
+| `accent-hover` | `#2563eb` | `#93c5fd` | Hover shade of accent elements. |
+| `accent-soft` | `#eff6ff` | `rgba(96, 165, 250, 0.14)` | Tinted accent fills (active menu items, selected rows). |
+| `accent-soft-strong` | `#dbeafe` | `rgba(96, 165, 250, 0.28)` | Stronger accent tint (info callout border). |
+| `accent-fg` | `#ffffff` | `#0a0a0a` | Text/icon on accent-filled elements. |
+| `accent-text` | `#1e40af` | `#93c5fd` | Accent-tinted text (link chips, mentions). |
+| `danger` | `#dc2626` | `#f87171` | Destructive text/icons (delete actions, danger callout). |
+| `danger-soft` | `#fef2f2` | `rgba(248, 113, 113, 0.14)` | Danger tint fill. |
+| `danger-soft-strong` | `#fecaca` | `rgba(248, 113, 113, 0.3)` | Danger border tint. |
+| `warning` | `#b45309` | `#fbbf24` | Warning text (warning callout, long-doc banner). |
+| `warning-soft` | `#fef3c7` | `rgba(251, 191, 36, 0.14)` | Warning tint fill. |
+| `warning-soft-strong` | `#fde68a` | `rgba(251, 191, 36, 0.3)` | Warning border tint. |
+| `success` | `#047857` | `#34d399` | Success text (success callout). |
+| `success-soft` | `#ecfdf5` | `rgba(52, 211, 153, 0.14)` | Success tint fill. |
+| `success-soft-strong` | `#bbf7d0` | `rgba(52, 211, 153, 0.3)` | Success border tint. |
+| `radius-sm` | `4px` | same | Corner radius of small controls (buttons, chips). |
+| `radius-md` | `6px` | same | Corner radius of inputs and menu items. |
+| `radius-lg` | `8px` | same | Corner radius of popovers, cards, code blocks. |
+| `shadow-popover` | layered, `rgba(15, 23, 42, …)` | layered, `rgba(0, 0, 0, …)` | Dropdown & popover shadow (full value in `theme.css`). |
+| `shadow-float` | `0 8px 32px rgba(15, 23, 42, 0.18)` | `0 8px 32px rgba(0, 0, 0, 0.65)` | Larger floating-overlay shadow (lightbox, drag previews). |
+| `duration-fast` | `120ms` | same | Micro-transition duration for hovers/toggles. |
+| `font-sans` | system UI stack | same | UI and content type stack. |
+| `font-mono` | system mono stack | same | Code type stack (inline code, code blocks, markdown pane). |
+
+Example — a violet brand accent with a warmer dark surface, app-wide:
+
+```css
+:root {
+  --accent: light-dark(#7c3aed, #a78bfa);
+  --accent-hover: light-dark(#6d28d9, #c4b5fd);
+  --accent-soft: light-dark(#f5f3ff, rgba(167, 139, 250, 0.14));
+  --background: light-dark(#ffffff, #131017);
+}
+```
+
+Or the same for one instance via the prop:
+
+```tsx
+<RDumpEditor
+  themeVars={{
+    accent: "light-dark(#7c3aed, #a78bfa)",
+    "radius-lg": "12px",
+    "font-mono": "'Fira Code', ui-monospace, monospace",
+  }}
+  …
+/>
+```
 
 ## Custom extensions
 

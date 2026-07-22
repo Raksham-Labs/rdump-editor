@@ -17,5 +17,5 @@
       "@rakshamlabs/rdump-editor/styles.css": ["./playground/src/noop.css"]
     }
   },
-  "include": ["src", "playground/src", "vite.config.ts", "playground/vite.config.ts"]
+  "include": ["src", "tests", "playground/src", "vite.config.ts", "playground/vite.config.ts"]
 }

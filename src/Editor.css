@@ -267,29 +267,38 @@
   margin: 0;
 }
 
+/* Tiptap-example quote: a neutral bar and full-contrast text, no tinted
+   fill — the old accent-soft slab washed the muted text out, most visibly
+   in dark mode. */
 .rdump-editor blockquote {
-  border-left: 3px solid var(--accent);
+  border-left: 3px solid var(--muted);
+  /* Zero inline margin: the UA default (1em 40px) indented quotes from both
+     sides relative to every other block. */
+  margin: 1em 0;
   padding: 0.4rem 0.9rem;
-  background: var(--accent-soft);
-  border-radius: 0 6px 6px 0;
-  color: var(--muted-strong);
 }
 
-.rdump-editor blockquote p {
-  color: var(--muted-strong);
-}
-
+/* Inline code as a visible chip: theme background plus a real border so it
+   stands out from body text (the bare light fill read as barely-there). */
 .rdump-editor code {
-  background: #f1f5f9;
-  border-radius: 4px;
+  background: light-dark(#f5f5f5, #1d1d21);
+  /* The dark fill is close to the page surface, so the chip's definition
+     comes from the border — the strong tone, or it melts away. */
+  border: 1px solid light-dark(#e5e5e5, #3f3f49);
+  border-radius: 6px;
   padding: 0.1em 0.3em;
   font-family: var(--font-mono);
-  font-size: 0.88em;
-  color: #0f172a;
+  font-size: 0.85em;
+  color: var(--foreground);
 }
 
+/* Code blocks stay dark in both schemes (the hljs palette is a dark-bg
+   palette), but the fill/border pair is per-scheme: navy on a light page,
+   and in dark mode an elevated panel gray with a visible border — flat navy
+   was indistinguishable from the #0e0e11 surface. */
 .rdump-editor pre {
-  background: #0f172a;
+  background: light-dark(#0f172a, #1b1b20);
+  border: 1px solid light-dark(#1e293b, #33333c);
   color: #e2e8f0;
   padding: 14px 16px;
   border-radius: 8px;
@@ -301,8 +310,10 @@
 
 .rdump-editor pre code {
   background: transparent;
+  border: 0;
   color: inherit;
   padding: 0;
+  font-size: inherit;
 }
 
 /* Code block chrome — language label + copy button rendered above the
@@ -311,7 +322,8 @@
 .rdump-codeblock {
   margin: 1rem 0;
   border-radius: 8px;
-  background: #0f172a;
+  background: light-dark(#0f172a, #1b1b20);
+  border: 1px solid light-dark(#1e293b, #33333c);
   overflow: hidden;
   position: relative;
 }
@@ -321,7 +333,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 6px 10px 6px 12px;
-  background: #111c2e;
+  background: light-dark(#111c2e, #232329);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 11px;
   color: #94a3b8;
@@ -356,7 +368,7 @@
 }
 
 .rdump-codeblock__lang option {
-  background: #111c2e;
+  background: light-dark(#111c2e, #232329);
   color: #e2e8f0;
 }
 
@@ -385,21 +397,32 @@
 }
 
 /* The <pre> inside the React NodeView wrapper shares the wrapper's rounded
-   corners — disable its own radius so the seam under the header is clean. */
+   corners and border — disable its own so the seam under the header is
+   clean and the edge isn't doubled. */
 .rdump-codeblock pre {
   margin: 0;
   border-radius: 0;
+  border: 0;
 }
 
+/* No padding: any inline padding shifts the surrounding text horizontally
+   and paints over adjacent lines, so a highlight must occupy exactly the
+   text's own box. Colored highlights carry an inline background-color which
+   overrides this fallback. The text color is forced dark (!important beats
+   the extension's inline `color: inherit`) because the swatch palette is
+   pastel — in dark mode inherited light text on a pastel fill would be
+   unreadable; in light mode this matches the normal foreground anyway. */
 .rdump-editor mark {
-  border-radius: 3px;
-  padding: 0.05em 0.18em;
+  border-radius: 2px;
   background: #fff3bf;
+  color: #262626 !important;
 }
 
 .rdump-editor hr {
   border: 0;
-  border-top: 1px solid var(--border);
+  /* border-strong: the plain --border tone all but vanished against the
+     dark background. */
+  border-top: 1px solid var(--border-strong);
   margin: 2rem 0;
 }
 
@@ -450,6 +473,10 @@
 .rdump-editor th {
   background: var(--panel-subtle);
   font-weight: 600;
+  /* Kill the UA's th centering: alignment defaults to left everywhere, so
+     the toolbar's "align left" (which resets to normal flow) actually
+     lands left — explicit center/right on the cell paragraph still wins. */
+  text-align: left;
 }
 
 /* prosemirror-tables marks selected cells with .selectedCell — overlay an
@@ -537,6 +564,19 @@
   border: 1px solid var(--border);
 }
 
+/* Image alignment — static HTML rendering (no node view): the img itself
+   carries data-align, so align it with auto margins. */
+.rdump-editor img.rdump-image[data-align="center"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rdump-editor img.rdump-image[data-align="right"] {
+  display: block;
+  margin-left: auto;
+}
+
 /* ---------- Image resize (Tiptap ResizableNodeView) ----------
    The node view emits data-resize-container on the outer flex shell,
    data-resize-wrapper on the relative parent that holds the img + handles,
@@ -547,8 +587,29 @@
   margin: 0.4em 0;
 }
 
+/* Image alignment — in the editor the node view's flex container does the
+   aligning (the img inside keeps margin: 0 from the rule below). */
+.rdump-editor [data-resize-container][data-node="image"][data-align="center"] {
+  justify-content: center;
+}
+
+.rdump-editor [data-resize-container][data-node="image"][data-align="right"] {
+  justify-content: flex-end;
+}
+
 .rdump-editor [data-resize-container][data-node="image"] [data-resize-wrapper] {
   max-width: 100%;
+  /* Hug the rendered image: the wrapper anchors the resize handles and the
+     size badge, so its box must be exactly the picture's box. */
+  width: fit-content;
+}
+
+/* ProseMirror draws its node-selection ring on the node view's OUTER dom —
+   here that's the flex container, which always spans the full editor column,
+   so the ring floated far past the picture's right edge. Suppress it: the
+   corner handles (visible while selected) are the selection indicator. */
+.rdump-editor [data-resize-container][data-node="image"].ProseMirror-selectednode {
+  outline: none;
 }
 
 .rdump-editor [data-resize-container][data-node="image"] img.rdump-image {
@@ -850,7 +911,7 @@
   max-width: 760px;
   width: calc(100% - 32px);
   border-radius: 6px;
-  border: 1px solid #fde68a;
+  border: 1px solid var(--warning-soft-strong);
   background: var(--warning-soft);
   color: var(--warning);
   font-size: 12px;

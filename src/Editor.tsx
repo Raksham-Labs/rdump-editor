@@ -3,9 +3,9 @@
 import type { AnyExtension } from "@tiptap/core";
 import { useEffect, useId, useMemo, useRef, useState, type Ref } from "react";
 import { resolveConfig, type RDumpEditorConfig } from "./config";
-import { EditorChrome, type EditorHandle } from "./EditorChrome";
-import { loadExtensions } from "./extensions";
-import type { ContentFormat } from "./markdown";
+import { EditorChrome, type EditorHandle } from "./ui/EditorChrome";
+import { loadExtensions } from "./core/extensions";
+import type { ContentFormat } from "./core/markdown";
 import {
   createDefaultRuntime,
   defaultNotify,
@@ -14,15 +14,17 @@ import {
   type MentionUser,
   type PageRef,
 } from "./runtime";
-import { setWorkspacePages } from "./workspacePages";
+import { setWorkspacePages } from "./core/workspacePages";
+import { themeVarsToStyle, type RDumpEditorTheme, type RDumpThemeVars } from "./theme";
 import "./Editor.css";
 
 export type { RDumpEditorConfig } from "./config";
-export type { EditorHandle } from "./EditorChrome";
-export type { ContentFormat } from "./markdown";
+export type { EditorHandle } from "./ui/EditorChrome";
+export type { ContentFormat } from "./core/markdown";
 export type { EditorNotify, MentionUser, PageRef } from "./runtime";
+export type { RDumpEditorTheme, RDumpThemeVars, ThemeTokenName } from "./theme";
 // Re-exported for host code that listens for these editor events.
-export { EDIT_MATH_EVENT, OPEN_IMAGE_PICKER_EVENT } from "./events";
+export { EDIT_MATH_EVENT, OPEN_IMAGE_PICKER_EVENT } from "./core/events";
 
 export interface EditorProps {
   // Stable identity for the open document; keys the per-doc migration guard
@@ -53,6 +55,12 @@ export interface EditorProps {
   // loading), UI chrome, behavior numbers. Compared by value — inline object
   // literals are fine.
   config?: RDumpEditorConfig;
+  // Color scheme: "light" (default), "dark", or "auto" (follow the OS).
+  theme?: RDumpEditorTheme;
+  // Per-instance theme token overrides (e.g. { accent: "#7c3aed" }). For
+  // app-wide theming, defining the same --tokens in host CSS works too —
+  // see theme.ts for the full layering story.
+  themeVars?: RDumpThemeVars;
   // Workspace page list backing [[ page links and @ page mentions.
   pages?: PageRef[];
   // Navigate to another document when a page link / page mention is clicked.
@@ -82,6 +90,8 @@ export function Editor({
   preview = false,
   onReady,
   config,
+  theme = "light",
+  themeVars,
   pages,
   onOpenPage,
   onUploadImage,
@@ -151,6 +161,8 @@ export function Editor({
       authorName={authorName}
       preview={preview}
       config={resolved}
+      theme={theme}
+      themeStyle={themeVarsToStyle(themeVars)}
       contentFormat={contentFormat}
       extensions={extensions}
       onChange={onChange}
